@@ -142,7 +142,7 @@ static void ChangeToScreen(int screen)
         default: break;
     }
 
-    currentScreen = screen;
+    currentScreen = (GameScreen)screen;
 }
 
 // Request transition to next screen
@@ -151,7 +151,7 @@ static void TransitionToScreen(int screen)
     onTransition = true;
     transFadeOut = false;
     transFromScreen = currentScreen;
-    transToScreen = screen;
+    transToScreen = (GameScreen)screen;
     transAlpha = 0.0f;
 }
 
