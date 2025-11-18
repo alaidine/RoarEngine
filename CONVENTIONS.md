@@ -1,4 +1,4 @@
-## C Coding Style Conventions
+## CPP Coding Style Conventions
 
 Code element | Convention | Example
 --- | :---: | ---
@@ -22,6 +22,8 @@ Struct members | lowerCase | `texture.width`, `color.r`
 Functions | TitleCase | `InitWindow()`, `LoadImageFromMemory()`
 Functions params | lowerCase | `width`, `height`
 Ternary Operator | (condition)? result1 : result2 | `printf("Value is 0: %s", (value == 0)? "yes" : "no");`
+Classes | TitleCase | `class Player`, `class Enemy`
+Class members | lowerCase with m_ prefix | `m_health`, `m_position`
 
 Other conventions:
  - All defined variables are ALWAYS initialized
