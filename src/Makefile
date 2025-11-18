@@ -33,7 +33,7 @@ PROJECT_NAME          ?= r-type
 PROJECT_VERSION       ?= 1.0
 PROJECT_BUILD_PATH    ?= .
 PROJECT_SOURCE_FILES  ?= \
-    raylib_game.cpp \
+    main.cpp \
     screen_logo.cpp \
     screen_title.cpp \
     screen_options.cpp \
