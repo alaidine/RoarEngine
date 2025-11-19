@@ -5,6 +5,8 @@ int main(int argc, char **argv)
     const int screenWidth = 800;
     const int screenHeight = 450;
 
+    const float boxSpeed = 5.0f;
+
     InitWindow(screenWidth, screenHeight, "r-type");
 
     Vector2 boxPosition = { (float)screenWidth/2, (float)screenHeight/2 };
@@ -14,10 +16,10 @@ int main(int argc, char **argv)
 
     while (!WindowShouldClose())
     {
-        if (IsKeyDown(KEY_RIGHT)) boxPosition.x += 2.0f;
-        if (IsKeyDown(KEY_LEFT)) boxPosition.x -= 2.0f;
-        if (IsKeyDown(KEY_UP)) boxPosition.y -= 2.0f;
-        if (IsKeyDown(KEY_DOWN)) boxPosition.y += 2.0f;
+        if (IsKeyDown(KEY_RIGHT)) boxPosition.x += boxSpeed;
+        if (IsKeyDown(KEY_LEFT)) boxPosition.x -= boxSpeed;
+        if (IsKeyDown(KEY_UP)) boxPosition.y -= boxSpeed;
+        if (IsKeyDown(KEY_DOWN)) boxPosition.y += boxSpeed;
 
         BeginDrawing();
 
