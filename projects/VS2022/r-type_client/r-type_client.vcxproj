@@ -37,8 +37,8 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0981CA98-E4A5-4DF1-987F-A41D09131EFC}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>r-type</RootNamespace>
-    <ProjectName>r-type</ProjectName>
+    <RootNamespace>r-type_client</RootNamespace>
+    <ProjectName>r-type_client</ProjectName>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -359,15 +359,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\screens.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\src\main.cpp" />
-    <ClCompile Include="..\..\..\src\screen_logo.cpp" />
-    <ClCompile Include="..\..\..\src\screen_title.cpp" />
-    <ClCompile Include="..\..\..\src\screen_options.cpp" />
-    <ClCompile Include="..\..\..\src\screen_gameplay.cpp" />
-    <ClCompile Include="..\..\..\src\screen_ending.cpp" />
+    <ClCompile Include="..\..\..\src\client.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\raylib_game.rc" />
