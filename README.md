@@ -7,44 +7,70 @@ When setting up this template on linux for the first time, install the dependenc
 
 You can use this templates in a few ways: using Visual Studio, using CMake, or make your own build setup. This repository comes with Visual Studio and CMake already set up.
 
-### Visual Studio
+### Project Structure
 
-- After extracting the zip or cloning the repository, the parent folder `r-type` should exist in the same directory as `raylib` and `sol2` themselves.  So, your file structure should look like this:
-    - Some parent directory
-        - `sol2`
-            - the contents of https://github.com/ThePhD/sol2
-        - `raylib`
-            - the contents of https://github.com/raysan5/raylib
-        - `r-type`
-            - this `README.md` and all other r-type files
-- If using Visual Studio, open projects/VS2022/r-type.sln
-- The solution is setup to start both the client and server projects at the same time.
-- Now you're all set up!  Click `Start` with the green play arrow and the project will run.
+The project is now organized into separate modules:
+- **core/**: Static library containing shared functionality (networking, physics, scripting)
+- **client/**: Client executable with graphics and input handling  
+- **server/**: Server executable with game logic and networking
+- **resources/**: Game assets (sprites, scripts, etc.)
 
-### CMake
+### CMake (Recommended)
 
-- Type the follow command:
-
+#### Basic Build:
 ```sh
 cmake -S . -B build
-```
-
-> if you want to configure your project to build with debug symbols, use the flag `-DCMAKE_BUILD_TYPE=Debug`
-
-- After CMake configures your project, build with:
-
-```sh
 cmake --build build
 ```
 
-- Inside the build folder is another folder (named the same as the project name on CMakeLists.txt) with the executable and resources folder.
-- In order for resources to load properly, cd to `src` and run the executable (`../build/${PROJECT_NAME}/${PROJECT_NAME}`) from there.
+#### Development Build with Debug Symbols:
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build
+```
 
-- cmake will automatically download a current release of raylib and sol2 but if you want to use your local version you can pass `-DFETCHCONTENT_SOURCE_DIR_RAYLIB=<dir_with_raylib>` and `-DFETCHCONTENT_SOURCE_DIR_SOL2=<dir_with_sol2>` to the cmake command.
+#### Using Local Dependencies (for faster builds):
+If you have `raylib`, `sol2`, and `box2d` in the parent directory:
+```sh
+cmake -S . -B build \
+  -DFETCHCONTENT_SOURCE_DIR_RAYLIB=../raylib \
+  -DFETCHCONTENT_SOURCE_DIR_SOL2=../sol2 \
+  -DFETCHCONTENT_SOURCE_DIR_BOX2D=../box2d
+```
+
+#### Running:
+- Executables are in `build/r-type/`
+- Resources are automatically copied to the output directory
+- Run from anywhere: `./build/r-type/r-type_client`
+
+### Visual Studio (Legacy)
+
+**Note**: Visual Studio projects are legacy and may require manual dependency setup. We recommend using CMake.
+
+For VS2022 projects, you need local dependencies in the parent directory:
+- Some parent directory
+  - `raylib/` - https://github.com/raysan5/raylib  
+  - `sol2/` - https://github.com/ThePhD/sol2
+  - `box2d/` - https://github.com/erincatto/box2d
+  - `r-type/` - This project
+
+Then open `projects/VS2022/r-type.sln`
+
+### Dependencies
+
+This project uses:
+- **Raylib 5.0**: Graphics and game framework
+- **Sol2**: Modern C++ Lua binding library  
+- **Lua 5.4**: Embedded scripting language (precompiled libraries in `lua/`)
+- **Box2D 2.4.1**: 2D physics engine
+
+**Core Library**: All shared dependencies are linked into `r-type_core` static library, which is then used by both client and server executables.
+
+**Automatic Fetching**: CMake automatically downloads raylib, sol2, and box2d. Use `FETCHCONTENT_SOURCE_DIR_*` variables to use local copies for faster builds.
 
 ## R-Type
 
-![alt text](logo/r-type.jpg "R-Type")
+![alt text](resources/logo/r-type.jpg "R-Type")
 
 ### Description
 

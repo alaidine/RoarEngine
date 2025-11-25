@@ -50,20 +50,23 @@ public:
 	void Run(void);
 
 	void SpawnLocalClient(int x, int y, uint32_t client_id);
-	void HandleConnection(void);
-	void HandleDisconnection(void);
 	bool ClientExists(uint32_t client_id);
 	void CreateClient(ClientState state);
-	void UpdateClient(ClientState state);
+	
 	void DestroyClient(uint32_t client_id);
 	void DestroyDisconnectedClients(void);
+
+	void HandleConnection(void);
+	void HandleDisconnection(void);
 	void HandleGameStateMessage(GameStateMessage* msg);
 	void HandleReceivedMessage(void);
 	void HandleGameClientEvent(int ev);
+
 	int SendPositionUpdate(void);
 	int SendColorUpdate(void);
 
 	int Update(void);
+	void UpdateClient(ClientState state);
 	
 	void UpdateAndDraw(void);
 	void DrawClient(ClientState* state, bool is_local);

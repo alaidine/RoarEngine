@@ -4,7 +4,11 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "src/**"
+      - "client/**"
+      - "server/**"
+      - "core/**"
+      - "resources/**"
+      - "CMakeLists.txt"
       - ".github/workflows/linux.yml"
   release:
     types: [published]
@@ -22,7 +26,7 @@ jobs:
       PROJECT_NAME: ${{ github.event.repository.name }}
       PROJECT_BUILD_PATH: ${{ github.event.repository.name }}/build
       PROJECT_RELEASE_PATH: ${{ github.event.repository.name }}_dev_linux_x64
-      PROJECT_RESOURCES_PATH: src/resources
+      PROJECT_RESOURCES_PATH: resources
 
     steps:
       - name: Checkout this repo
@@ -46,8 +50,9 @@ jobs:
           if [ ! -d "deps" ]; then
             mkdir deps
             cd deps
-            git clone --depth 1 https://github.com/raysan5/raylib.git raylib
-            git clone --depth 1 https://github.com/ThePhD/sol2.git sol2
+            git clone --depth 1 --branch 5.0 https://github.com/raysan5/raylib.git raylib
+            git clone --depth 1 --branch v3.3.0 https://github.com/ThePhD/sol2.git sol2
+            git clone --depth 1 --branch v3.1.1 https://github.com/erincatto/box2d.git box2d
             cd ..
           else
             echo "Using cached dependencies"
@@ -73,7 +78,8 @@ jobs:
           cd ${{ env.PROJECT_NAME }}
           cmake -B build -DCMAKE_BUILD_TYPE=Release \
             -DFETCHCONTENT_SOURCE_DIR_RAYLIB=${{ github.workspace }}/deps/raylib \
-            -DFETCHCONTENT_SOURCE_DIR_SOL2=${{ github.workspace }}/deps/sol2
+            -DFETCHCONTENT_SOURCE_DIR_SOL2=${{ github.workspace }}/deps/sol2 \
+            -DFETCHCONTENT_SOURCE_DIR_BOX2D=${{ github.workspace }}/deps/box2d
 
       - name: Build Product
         run: |

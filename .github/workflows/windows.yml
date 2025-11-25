@@ -4,7 +4,11 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "src/**"
+      - "client/**"
+      - "server/**"  
+      - "core/**"
+      - "resources/**"
+      - "CMakeLists.txt"
       - ".github/workflows/windows.yml"
   release:
     types: [published]
@@ -23,7 +27,7 @@ jobs:
       CLIENT_BUILD_PATH: "${{ github.event.repository.name }}\\projects\\VS2022\\build\\${{ github.event.repository.name }}_client\\bin\\x64\\Release"
       SERVER_BUILD_PATH: "${{ github.event.repository.name }}\\projects\\VS2022\\build\\${{ github.event.repository.name }}_server\\bin\\x64\\Release"
       PROJECT_RELEASE_PATH: ${{ github.event.repository.name }}_dev_win_x64
-      PROJECT_RESOURCES_PATH: src\\resources
+      PROJECT_RESOURCES_PATH: resources
 
     steps:
       - name: Checkout this repo
@@ -38,6 +42,7 @@ jobs:
           path: |
             raylib
             sol2
+            box2d
           key: ${{ runner.os }}-deps-${{ hashFiles('projects/VS2022/**/*.vcxproj', 'projects/VS2022/**/*.sln') }}
           restore-keys: |
             ${{ runner.os }}-deps-
@@ -45,14 +50,19 @@ jobs:
       - name: Setup dependencies
         run: |
           if (!(Test-Path "raylib")) {
-            git clone --depth 1 https://github.com/raysan5/raylib.git raylib
+            git clone --depth 1 --branch 5.0 https://github.com/raysan5/raylib.git raylib
           } else {
             Write-Host "Using cached raylib dependency"
           }
           if (!(Test-Path "sol2")) {
-            git clone --depth 1 https://github.com/ThePhD/sol2.git sol2
+            git clone --depth 1 --branch v3.3.0 https://github.com/ThePhD/sol2.git sol2
           } else {
             Write-Host "Using cached sol2 dependency"
+          }
+          if (!(Test-Path "box2d")) {
+            git clone --depth 1 --branch v3.1.1 https://github.com/erincatto/box2d.git box2d
+          } else {
+            Write-Host "Using cached box2d dependency"
           }
         shell: pwsh
 
