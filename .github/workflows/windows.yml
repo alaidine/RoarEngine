@@ -88,7 +88,7 @@ jobs:
         run: |
           dir
           cd ${{ env.PROJECT_NAME }}/projects/VS2022
-          msbuild.exe ${{ env.PROJECT_NAME }}.sln /target:${{ env.PROJECT_NAME }}_client;${{ env.PROJECT_NAME }}_server /property:Configuration=Release /property:Platform=x64
+          msbuild.exe ${{ env.PROJECT_NAME }}.sln /target:${{ env.PROJECT_NAME }}_core;${{ env.PROJECT_NAME }}_client;${{ env.PROJECT_NAME }}_server /property:Configuration=Release /property:Platform=x64
           cd ../..
         shell: cmd
 

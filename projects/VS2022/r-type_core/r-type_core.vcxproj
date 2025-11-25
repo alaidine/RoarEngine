@@ -26,6 +26,14 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\core\shared.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\box2d\box2d.vcxproj">
+      <Project>{b2d87654-3210-4567-8901-123456789012}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\raylib\raylib.vcxproj">
+      <Project>{e89d61ac-55de-4482-afd4-df7242ebc859}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
