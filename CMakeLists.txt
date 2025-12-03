@@ -1,7 +1,14 @@
 cmake_minimum_required(VERSION 3.24...4.1)
 project(r-type)
 
-include(FetchContent)
+# Download CPM.cmake
+file(
+    DOWNLOAD
+    https://github.com/cpm-cmake/CPM.cmake/releases/download/v0.40.2/CPM.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake
+    EXPECTED_HASH SHA256=c8cdc32c03816538ce22781ed72964dc864b2a34a310d3b7104812a5ca2d835d
+)
+include(${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -10,30 +17,31 @@ set(CORE_LIB r-type_core)
 set(CLIENT r-type_client)
 set(SERVER r-type_server)
 
-# Dependencies - use local sources if available via FETCHCONTENT_SOURCE_DIR
-set(FETCHCONTENT_QUIET FALSE)
-
-# Using URL downloads instead of Git to avoid network issues
-FetchContent_Declare(
-    raylib
+# Dependencies using CPM
+CPMAddPackage(
+    NAME raylib
     URL https://github.com/raysan5/raylib/archive/refs/tags/5.0.zip
-    DOWNLOAD_EXTRACT_TIMESTAMP OFF
+    VERSION 5.0
+    DOWNLOAD_ONLY YES
 )
+if(raylib_ADDED)
+    # Configure raylib build options
+    set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    set(BUILD_GAMES OFF CACHE BOOL "" FORCE)
+    add_subdirectory(${raylib_SOURCE_DIR} ${raylib_BINARY_DIR})
+endif()
 
-FetchContent_Declare(
-    sol2
+CPMAddPackage(
+    NAME sol2
     URL https://github.com/ThePhD/sol2/archive/refs/tags/v3.3.0.zip
-    DOWNLOAD_EXTRACT_TIMESTAMP OFF
+    VERSION 3.3.0
 )
 
-FetchContent_Declare(
-    box2d
+CPMAddPackage(
+    NAME box2d
     URL https://github.com/erincatto/box2d/archive/refs/tags/v3.1.1.zip
-    DOWNLOAD_EXTRACT_TIMESTAMP OFF
+    VERSION 3.1.1
 )
-
-# Make dependencies available
-FetchContent_MakeAvailable(raylib sol2 box2d)
 
 # Lua setup using local libraries
 set(LUA_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/lua/include)

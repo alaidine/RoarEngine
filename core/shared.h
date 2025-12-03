@@ -21,8 +21,8 @@
 #define GAME_WIDTH 800
 #define GAME_HEIGHT 600
 
-#define MIN_FLOAT_VAL -5 // Minimum value of networked client float value
-#define MAX_FLOAT_VAL 5 // Maximum value of networked client float value
+#define MIN_FLOAT_VAL -1000 // Minimum value of networked client float value
+#define MAX_FLOAT_VAL 1000 // Maximum value of networked client float value
 
 // Maximum number of connected clients at a time
 #define MAX_CLIENTS 4
@@ -30,16 +30,31 @@
 // Max number of colors for client to switch between
 #define MAX_COLORS 7
 
+// Max number of missiles that can be handled by the server
+#define MAX_MISSILES 400
+
+// Max number of missiles that can be sent to the server
+#define MAX_MISSILES_CLIENT 100
+
 // A code passed by the server when closing a client connection due to being full (max client count reached)
 #define SERVER_FULL_CODE 42
 
 // Message ids
 enum
 {
-    CHANGE_COLOR_MESSAGE,
     UPDATE_STATE_MESSAGE,
+    MISSILES_STATE_MESSAGE,
     GAME_STATE_MESSAGE
 };
+
+typedef struct
+{
+    Vector2 pos;
+    Rectangle rect;
+    uint32_t currentFrame;
+    uint32_t framesSpeed;
+    uint32_t framesCounter;
+} Missile;
 
 // Messages
 
@@ -47,34 +62,9 @@ typedef struct
 {
     int x;
     int y;
-    float val;
+    unsigned int missile_count;
+    Missile missiles[MAX_MISSILES_CLIENT];
 } UpdateStateMessage;
-
-// Client colors used for ChangeColorMessage and GameStateMessage messages
-typedef enum
-{
-    CLI_RED,
-    CLI_GREEN,
-    CLI_BLUE,
-    CLI_YELLOW,
-    CLI_ORANGE,
-    CLI_PURPLE,
-    CLI_PINK
-} ClientColor;
-
-typedef struct
-{
-    ClientColor color;
-} ChangeColorMessage;
-
-typedef struct
-{
-    Vector2 pos;
-    Rectangle rect;
-    int currentFrame;
-    int framesSpeed;
-    int framesCounter;
-} Missile;
 
 // Client state, represents a client over the network
 typedef struct
@@ -82,8 +72,8 @@ typedef struct
     uint32_t client_id;
     int x;
     int y;
-    float val;
-    ClientColor color;
+    unsigned int missile_count;
+    Missile missiles[MAX_MISSILES_CLIENT];
 } ClientState;
 
 typedef struct
@@ -100,10 +90,6 @@ typedef struct
     float ping;
     float jitter;
 } Options;
-
-ChangeColorMessage* ChangeColorMessage_Create(void);
-void ChangeColorMessage_Destroy(ChangeColorMessage*);
-int ChangeColorMessage_Serialize(ChangeColorMessage* msg, NBN_Stream*);
 
 UpdateStateMessage* UpdateStateMessage_Create(void);
 void UpdateStateMessage_Destroy(UpdateStateMessage*);

@@ -32,7 +32,6 @@ private:
 	std::array<Rectangle, 5> m_missileAnimationRectangles;
 	std::vector<Missile> m_missiles;
 	unsigned int m_clientCount;
-	bool m_colorKeyPressed;
 	bool m_fireMissileKeyPressed;
 	double m_tickDt; // Tick delta time (in seconds)
 	double m_acc;
@@ -67,7 +66,6 @@ public:
 	void HandleGameClientEvent(int ev);
 
 	int SendPositionUpdate(void);
-	int SendColorUpdate(void);
 
 	int UpdateGameplay(void);
 	void UpdateClient(ClientState state);

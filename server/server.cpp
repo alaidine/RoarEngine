@@ -11,7 +11,6 @@ Server::Server()
 {
     g_serverInstance = this; // Set global instance pointer
     signal(SIGINT, SigintHandler);
-
     m_clients = {};
     m_spawns = {
         {50, 50},
@@ -19,7 +18,6 @@ Server::Server()
         {50, GAME_HEIGHT - 100},
         {GAME_WIDTH - 100, GAME_HEIGHT - 100}
     };
-
     tick_dt = 1.0f / TICK_RATE; // Tick delta time
 }
 
@@ -98,8 +96,8 @@ int Server::HandleNewConnection(void)
     client->state.client_id = client_handle;
     client->state.x = 200;
     client->state.y = 400;
-    client->state.color = CLI_RED;
-    client->state.val = 0;
+    client->state.missile_count = 0;
+    memset(client->state.missiles, 0, MAX_MISSILES_CLIENT);
 
     m_clientCount++;
 
@@ -147,22 +145,16 @@ void Server::HandleClientDisconnection()
     m_clientCount--;
 }
 
-void Server::HandleUpdateStateMessage(UpdateStateMessage * msg, Client * sender)
+void Server::HandleUpdateStateMessage(UpdateStateMessage* msg, Client* sender)
 {
     // Update the state of the client with the data from the received UpdateStateMessage message
     sender->state.x = msg->x;
     sender->state.y = msg->y;
-    sender->state.val = msg->val;
+    sender->state.missile_count = msg->missile_count;
+    memset(sender->state.missiles, 0, sizeof(sender->state.missiles));
+    memcpy(sender->state.missiles, msg->missiles, sender->state.missile_count * sizeof(Missile));
 
     UpdateStateMessage_Destroy(msg);
-}
-
-void Server::HandleChangeColorMessage(ChangeColorMessage* msg, Client* sender)
-{
-    // Update the client color
-    sender->state.color = msg->color;
-
-    ChangeColorMessage_Destroy(msg);
 }
 
 void Server::HandleReceivedMessage(void)
@@ -180,11 +172,6 @@ void Server::HandleReceivedMessage(void)
     case UPDATE_STATE_MESSAGE:
         // The server received a client state update
         HandleUpdateStateMessage((UpdateStateMessage*)msg_info.data, sender);
-        break;
-
-    case CHANGE_COLOR_MESSAGE:
-        // The server received a client switch color action
-        HandleChangeColorMessage((ChangeColorMessage*)msg_info.data, sender);
         break;
     }
 }
@@ -229,8 +216,11 @@ int Server::BroadcastGameState(void)
         client_states[client_index].client_id = client->state.client_id;
         client_states[client_index].x = client->state.x;
         client_states[client_index].y = client->state.y;
-        client_states[client_index].val = client->state.val;
-        client_states[client_index].color = client->state.color;
+        client_states[client_index].missile_count = client->state.missile_count;
+
+        memset(client_states[client_index].missiles, 0, sizeof(client_states[client_index].missiles));
+        memcpy(client_states[client_index].missiles, client->state.missiles, client_states[client_index].missile_count * sizeof(Missile));
+
         client_index++;
     }
 
@@ -315,8 +305,8 @@ void Server::Init(int argc, char **argv)
     // Read command line arguments
     if (ReadCommandLine(argc, argv))
     {
-        printf("Usage: server [--packet_loss=<value>] [--packet_duplication=<value>] [--ping=<value>] \
-                [--jitter=<value>]\n");
+        printf("Usage: r-type_server [--packet_loss <value>] [--packet_duplication <value>] [--ping <value>]"
+               " [--jitter <value>]\n");
         return;
     }
 
@@ -334,11 +324,6 @@ void Server::Init(int argc, char **argv)
     }
 
     // Register messages, have to be done after NBN_GameServer_StartEx
-    NBN_GameServer_RegisterMessage(
-        CHANGE_COLOR_MESSAGE,
-        (NBN_MessageBuilder)ChangeColorMessage_Create,
-        (NBN_MessageDestructor)ChangeColorMessage_Destroy,
-        (NBN_MessageSerializer)ChangeColorMessage_Serialize);
     NBN_GameServer_RegisterMessage(
         UPDATE_STATE_MESSAGE,
         (NBN_MessageBuilder)UpdateStateMessage_Create,

@@ -1,16 +1,5 @@
 #include "client.h"
 
-// Conversion table between client color values and raylib colors
-Color client_colors_to_raylib_colors[] = {
-    RED,    // CLI_RED
-    LIME,   // CLI_GREEN
-    BLUE,   // CLI_BLUE
-    YELLOW, // CLI_YELLOW
-    ORANGE, // CLI_ORANGE
-    PURPLE, // CLI_PURPLE
-    PINK    // CLI_PINK
-};
-
 Client::Client()
 {
     m_clientInitialized = false;
@@ -22,7 +11,6 @@ Client::Client()
     m_clients = { 0 };
     m_updatedIds = { 0 };
     m_clientCount = 0;
-    m_colorKeyPressed = false;
     m_fireMissileKeyPressed = false;
     m_localClientState = { 0 };
     m_tickDt = 1.0f / TICK_RATE; // Tick delta time (in seconds)
@@ -64,6 +52,8 @@ void Client::SpawnLocalClient(int x, int y, uint32_t client_id)
     m_localClientState.client_id = client_id;
     m_localClientState.x = x;
     m_localClientState.y = y;
+    m_localClientState.missile_count = 0;
+    memset(m_localClientState.missiles, 0, MAX_MISSILES_CLIENT);
 
     m_spawned = true;
 }
@@ -133,6 +123,9 @@ void Client::CreateClient(ClientState state)
 
     // Fill the newly created client state with client state info received from the server
     memcpy(client, &state, sizeof(ClientState));
+
+    client->missile_count = 0;
+    memset(client->missiles, 0, MAX_MISSILES_CLIENT);
 
     m_clientCount++;
 
@@ -249,7 +242,7 @@ void Client::HandleReceivedMessage(void)
 
     switch (msg_info.type)
     {
-        // We received the latest game state from the server
+    // We received the latest game state from the server
     case GAME_STATE_MESSAGE:
         HandleGameStateMessage((GameStateMessage*)msg_info.data);
         break;
@@ -284,24 +277,11 @@ int Client::SendPositionUpdate(void)
     // Fill message data
     msg->x = m_localClientState.x;
     msg->y = m_localClientState.y;
-    msg->val = m_localClientState.val;
+    msg->missile_count = std::min((unsigned int)m_missiles.size(), (unsigned int)MAX_MISSILES_CLIENT);
+    memcpy(msg->missiles, m_missiles.data(), msg->missile_count * sizeof(Missile));
 
     // Unreliably send it to the server
     if (NBN_GameClient_SendUnreliableMessage(UPDATE_STATE_MESSAGE, msg) < 0)
-        return -1;
-
-    return 0;
-}
-
-int Client::SendColorUpdate(void)
-{
-    ChangeColorMessage* msg = ChangeColorMessage_Create();
-
-    // Fill message data
-    msg->color = m_localClientState.color;
-
-    // Reliably send it to the server
-    if (NBN_GameClient_SendReliableMessage(CHANGE_COLOR_MESSAGE, msg) < 0)
         return -1;
 
     return 0;
@@ -333,32 +313,6 @@ int Client::UpdateGameplay(void)
         m_localClientState.x = MAX(0, m_localClientState.x - 5);
     else if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))
         m_localClientState.x = MIN(GAME_WIDTH - 50, m_localClientState.x + 5);
-
-    // Color switching
-    if (IsKeyDown(KEY_SPACE) && !m_colorKeyPressed)
-    {
-        m_colorKeyPressed = true;
-        m_localClientState.color = (ClientColor)((m_localClientState.color + 1) % MAX_COLORS);
-
-        TraceLog(LOG_INFO, "Switched color, new color: %d", m_localClientState.color);
-
-        if (SendColorUpdate() < 0)
-        {
-            TraceLog(LOG_WARNING, "Failed to send color update");
-
-            return -1;
-        }
-    }
-
-    if (IsKeyUp(KEY_SPACE))
-        m_colorKeyPressed = false;
-
-    // Increasing/Decreasing floating point value
-    if (IsKeyDown(KEY_K))
-        m_localClientState.val = MIN(MAX_FLOAT_VAL, m_localClientState.val + 0.005);
-
-    if (IsKeyDown(KEY_J))
-        m_localClientState.val = MAX(MIN_FLOAT_VAL, m_localClientState.val - 0.005);
 
     // Send the latest local client state to the server
     if (SendPositionUpdate() < 0)
@@ -610,11 +564,6 @@ void Client::InitClient(char* serverIp)
     // Register messages, have to be done after NBN_GameClient_StartEx
     // Messages need to be registered on both client and server side
     NBN_GameClient_RegisterMessage(
-        CHANGE_COLOR_MESSAGE,
-        (NBN_MessageBuilder)ChangeColorMessage_Create,
-        (NBN_MessageDestructor)ChangeColorMessage_Destroy,
-        (NBN_MessageSerializer)ChangeColorMessage_Serialize);
-    NBN_GameClient_RegisterMessage(
         UPDATE_STATE_MESSAGE,
         (NBN_MessageBuilder)UpdateStateMessage_Create,
         (NBN_MessageDestructor)UpdateStateMessage_Destroy,
@@ -677,8 +626,11 @@ void Client::DrawMissiles(void)
     m_missiles.erase(std::remove_if(m_missiles.begin(), m_missiles.end(),
         [](Missile missile) {
             if (missile.pos.x > GAME_WIDTH)
+            {
                 TraceLog(LOG_INFO, "Missile out of map... Deleting missile...");
-            return missile.pos.x > GAME_WIDTH;
+                return true;
+            }
+            return false;
         }), m_missiles.end());
 
     for (Missile& missile : m_missiles)
@@ -706,6 +658,25 @@ void Client::DrawMissiles(void)
         Vector2 origin = { 0.0f, 0.0f };
 
         DrawTexturePro(m_player, sourceRec, destRec, origin, 0.0f, WHITE);
+    }
+
+    for (int i = 0; i < MAX_CLIENTS - 1; i++)
+    {
+        if (m_clients[i])
+        {
+            for (int j = 0; j < m_clients[i]->missile_count; j++)
+            {
+                Missile missile = m_clients[i]->missiles[j];
+                float frameWidth = missile.rect.width;
+                float frameHeight = missile.rect.height;
+                Rectangle sourceRec = { missile.rect.x, missile.rect.y, frameWidth, frameHeight };
+                Rectangle rec = { (float)missile.pos.x, (float)missile.pos.y, frameWidth * 2.0f, frameHeight * 2.0f };
+                Rectangle destRec = { (float)missile.pos.x, (float)missile.pos.y, frameWidth * 2.0f, frameHeight * 2.0f };
+                Vector2 origin = { 0.0f, 0.0f };
+
+                DrawTexturePro(m_player, sourceRec, destRec, origin, 0.0f, WHITE);
+            }
+        }
     }
 }
 

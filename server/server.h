@@ -42,7 +42,6 @@ public:
 	void DestroyClient(Client* client);
 	void HandleClientDisconnection();
 	void HandleUpdateStateMessage(UpdateStateMessage* msg, Client* sender);
-	void HandleChangeColorMessage(ChangeColorMessage* msg, Client* sender);
 	void HandleReceivedMessage(void);
 	int HandleGameServerEvent(int ev);
 	int BroadcastGameState(void);

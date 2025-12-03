@@ -19,26 +19,9 @@ enum
 
 static Options options = { 0 };
 
-ChangeColorMessage* ChangeColorMessage_Create(void)
-{
-    return (ChangeColorMessage*)malloc(sizeof(ChangeColorMessage));
-}
-
-void ChangeColorMessage_Destroy(ChangeColorMessage* msg)
-{
-    free(msg);
-}
-
-int ChangeColorMessage_Serialize(ChangeColorMessage* msg, NBN_Stream* stream)
-{
-    NBN_SerializeUInt(stream, msg->color, 0, MAX_COLORS - 1);
-
-    return 0;
-}
-
 UpdateStateMessage* UpdateStateMessage_Create(void)
 {
-    return (UpdateStateMessage*)malloc(sizeof(UpdateStateMessage));
+    return (UpdateStateMessage*)calloc(1, sizeof(UpdateStateMessage));
 }
 
 void UpdateStateMessage_Destroy(UpdateStateMessage* msg)
@@ -50,14 +33,31 @@ int UpdateStateMessage_Serialize(UpdateStateMessage* msg, NBN_Stream* stream)
 {
     NBN_SerializeUInt(stream, msg->x, 0, GAME_WIDTH);
     NBN_SerializeUInt(stream, msg->y, 0, GAME_HEIGHT);
-    NBN_SerializeFloat(stream, msg->val, MIN_FLOAT_VAL, MAX_FLOAT_VAL, 3);
+
+    NBN_SerializeUInt(stream, msg->missile_count, 0, MAX_MISSILES_CLIENT);
+
+    for (unsigned int i = 0; i < msg->missile_count; i++)
+    {
+
+        NBN_SerializeUInt(stream, msg->missiles[i].currentFrame, 0, UINT_MAX);
+        NBN_SerializeUInt(stream, msg->missiles[i].framesCounter, 0, UINT_MAX);
+        NBN_SerializeUInt(stream, msg->missiles[i].framesSpeed, 0, UINT_MAX);
+
+        NBN_SerializeFloat(stream, msg->missiles[i].rect.x, MIN_FLOAT_VAL, MAX_FLOAT_VAL, 3);
+        NBN_SerializeFloat(stream, msg->missiles[i].rect.y, MIN_FLOAT_VAL, MAX_FLOAT_VAL, 3);
+        NBN_SerializeFloat(stream, msg->missiles[i].rect.width, MIN_FLOAT_VAL, MAX_FLOAT_VAL, 3);
+        NBN_SerializeFloat(stream, msg->missiles[i].rect.height, MIN_FLOAT_VAL, MAX_FLOAT_VAL, 3);
+
+        NBN_SerializeFloat(stream, msg->missiles[i].pos.x, MIN_FLOAT_VAL, MAX_FLOAT_VAL, 3);
+        NBN_SerializeFloat(stream, msg->missiles[i].pos.y, MIN_FLOAT_VAL, MAX_FLOAT_VAL, 3);
+    }
 
     return 0;
 }
 
 GameStateMessage* GameStateMessage_Create(void)
 {
-    return (GameStateMessage*)malloc(sizeof(GameStateMessage));
+    return (GameStateMessage*)calloc(1, sizeof(GameStateMessage));
 }
 
 void GameStateMessage_Destroy(GameStateMessage* msg)
@@ -72,10 +72,26 @@ int GameStateMessage_Serialize(GameStateMessage* msg, NBN_Stream* stream)
     for (unsigned int i = 0; i < msg->client_count; i++)
     {
         NBN_SerializeUInt(stream, msg->client_states[i].client_id, 0, UINT_MAX);
-        NBN_SerializeUInt(stream, msg->client_states[i].color, 0, MAX_COLORS - 1);
         NBN_SerializeUInt(stream, msg->client_states[i].x, 0, GAME_WIDTH);
         NBN_SerializeUInt(stream, msg->client_states[i].y, 0, GAME_HEIGHT);
-        NBN_SerializeFloat(stream, msg->client_states[i].val, MIN_FLOAT_VAL, MAX_FLOAT_VAL, 3);
+
+        // Add missile serialization
+        NBN_SerializeUInt(stream, msg->client_states[i].missile_count, 0, MAX_MISSILES_CLIENT);
+
+        for (unsigned int j = 0; j < msg->client_states[i].missile_count; j++)
+        {
+            NBN_SerializeUInt(stream, msg->client_states[i].missiles[j].currentFrame, 0, UINT_MAX);
+            NBN_SerializeUInt(stream, msg->client_states[i].missiles[j].framesCounter, 0, UINT_MAX);
+            NBN_SerializeUInt(stream, msg->client_states[i].missiles[j].framesSpeed, 0, UINT_MAX);
+
+            NBN_SerializeFloat(stream, msg->client_states[i].missiles[j].rect.x, MIN_FLOAT_VAL, MAX_FLOAT_VAL, 3);
+            NBN_SerializeFloat(stream, msg->client_states[i].missiles[j].rect.y, MIN_FLOAT_VAL, MAX_FLOAT_VAL, 3);
+            NBN_SerializeFloat(stream, msg->client_states[i].missiles[j].rect.width, MIN_FLOAT_VAL, MAX_FLOAT_VAL, 3);
+            NBN_SerializeFloat(stream, msg->client_states[i].missiles[j].rect.height, MIN_FLOAT_VAL, MAX_FLOAT_VAL, 3);
+
+            NBN_SerializeFloat(stream, msg->client_states[i].missiles[j].pos.x, MIN_FLOAT_VAL, MAX_FLOAT_VAL, 3);
+            NBN_SerializeFloat(stream, msg->client_states[i].missiles[j].pos.y, MIN_FLOAT_VAL, MAX_FLOAT_VAL, 3);
+        }
     }
 
     return 0;
