@@ -38,16 +38,16 @@ int main() {
     rendererBuilder.BuildSignature<RendererSystem, Position, Sprite>(_core);
 
     MiniBuilder::SystemBuilder inputControllerBuilder(inputControllerSignature);
-    inputControllerBuilder.BuildSignature<InputControllerSystem, Position, Velocity, InputController>(_core);
+    inputControllerBuilder.BuildSignature<InputControllerSystem, Position, Velocity, InputController, AnimationComponent>(_core);
 
     Entity player = Prefab::MakePlayer(_core, (float)screenWidth/2, (float)screenHeight/2);
-    
+    Entity missile = Prefab::MakeMilssile(_core);
     srand(time(NULL));
 
-    Entity enemy1[5000];
+    Entity enemy = Prefab::MakeEnemy(_core, rand() % 800 + 1, rand() % 450+ 1);
 
     for (int i = 0; i < 5000; i++)
-        enemy1[i] = Prefab::MakeEnemy(_core, rand() % 800 + 1, rand() % 450+ 1);
+        
  
     SetTargetFPS(60);
 

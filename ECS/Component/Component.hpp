@@ -22,4 +22,16 @@ struct Sprite {
     Color color;
 };
 
+struct Collider {
+    Rectangle rect;
+};
+
+struct AnimationComponent {
+    Rectangle rect;
+    std::array<Rectangle, 5> _animationRectangle;
+    int _current_frame;
+    int _frameCounter;
+    int _frameSpeed;
+};
+
 struct InputController{};
