@@ -30,6 +30,7 @@ namespace Prefab {
         _core.AddComponent(e, Sprite{RED});
         _core.AddComponent(e, Position{Vector2{0, 0}});
         _core.AddComponent(e, Tag{false});
+        _core.AddComponent(e, MissileTag{});
         return e;
     }
 
@@ -44,6 +45,8 @@ namespace Prefab {
             Rectangle{0, 30, 32, 22},
         });
         _core.AddComponent(e, Tag{true});
+        _core.AddComponent(e, Sprite{WHITE});
+        _core.AddComponent(e, playerCooldown{false});
         return e;
     }
 }

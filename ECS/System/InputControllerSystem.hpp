@@ -19,7 +19,7 @@
 
 extern Core _core;
 
-void DrawMissiles(Position& pos, AnimationComponent& anim, Sprite& sprite, Texture2D& player) {
+void DrawMissiles(Position& pos, AnimationComponent& anim, Texture2D& player) {
    
     anim._frameCounter++;
 
@@ -36,14 +36,14 @@ void DrawMissiles(Position& pos, AnimationComponent& anim, Sprite& sprite, Textu
 
     pos.position.x += 5;
 
-    float frameWidth = anim.rect.width;
-    float frameHeight = anim.rect.height;
-    Rectangle sourceRec = { anim.rect.x, anim.rect.y, frameWidth, frameHeight };
-    Rectangle rec = { (float)pos.position.x, (float)pos.position.y, frameWidth * 2.0f, frameHeight * 2.0f };
-    Rectangle destRec = { (float)pos.position.x, (float)pos.position.y, frameWidth * 2.0f, frameHeight * 2.0f };
-    Vector2 origin = { 0.0f, 0.0f };
+    // float frameWidth = anim.rect.width;
+    // float frameHeight = anim.rect.height;
+    // Rectangle sourceRec = { anim.rect.x, anim.rect.y, frameWidth, frameHeight };
+    // Rectangle rec = { (float)pos.position.x, (float)pos.position.y, frameWidth * 2.0f, frameHeight * 2.0f };
+    // Rectangle destRec = { (float)pos.position.x, (float)pos.position.y, frameWidth * 2.0f, frameHeight * 2.0f };
+    // Vector2 origin = { 0.0f, 0.0f };
 
-    DrawTexturePro(player, sourceRec, destRec, origin, 0.0f, sprite.color);
+    // DrawTexturePro(player, sourceRec, destRec, origin, 0.0f, sprite.color);
 
 }
 
@@ -69,8 +69,8 @@ void fire(Vector2& missilePos, Vector2& palyerPos, AnimationComponent& missileAn
 {
     missilePos.x = palyerPos.x;
     missilePos.y = palyerPos.y;
-    missileAnim.rect.x= missileAnim._animationRectangle[missileAnim._current_frame].x;
-    missileAnim.rect.y= missileAnim._animationRectangle[missileAnim._current_frame].y;
+    missileAnim.rect.x = missileAnim._animationRectangle[missileAnim._current_frame].x;
+    missileAnim.rect.y = missileAnim._animationRectangle[missileAnim._current_frame].y;
     missileAnim.rect.height = missileAnim._animationRectangle[missileAnim._current_frame].height;
     missileAnim.rect.width = missileAnim._animationRectangle[missileAnim._current_frame].width;
 }
@@ -78,22 +78,22 @@ void fire(Vector2& missilePos, Vector2& palyerPos, AnimationComponent& missileAn
 class InputControllerSystem : public System {
     public:
         void Update() override {
-            bool fireKeyPressed = false;
+            std::cout << "2" << std::endl;
             for (auto& entity: _entities) {
                 auto& pos = _core.GetComponent<Position>(entity);
                 auto& input = _core.GetComponent<InputController>(entity);
                 auto& playertexture = _core.GetComponent<PlayerSprite>(entity);
-                if (IsKeyDown(KEY_SPACE) && !fireKeyPressed) {
-                    fireKeyPressed = true;
+                auto& cooldown = _core.GetComponent<playerCooldown>(entity);
+                if (IsKeyDown(KEY_SPACE) && !cooldown.canFire) {
+                    cooldown.canFire = true;
                     Entity missile = Prefab::MakeMilssile(_core);
                     auto& missilePos = _core.GetComponent<Position>(missile);
                     auto&  anim = _core.GetComponent<AnimationComponent>(missile);
                     auto& sprite = _core.GetComponent<Sprite>(missile);
                     fire(missilePos.position, pos.position, anim);
-                    DrawMissiles(missilePos, anim, sprite, playertexture.texture);
                 }
                 if (IsKeyUp(KEY_SPACE))
-                    fireKeyPressed = true;
+                    cooldown.canFire = false;
                 
                 if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W))
                     pos.position.y = MAX(0, pos.position.y - 5);
@@ -104,7 +104,7 @@ class InputControllerSystem : public System {
                     pos.position.x = MAX(0, pos.position.x - 5);
                 else if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))
                     pos.position.x = MIN(GAME_WIDTH - 50, pos.position.x + 5);
-                DrawPlayer(pos, playertexture.texture);
+                // DrawPlayer(pos, playertexture.texture);
             }
         }
 };

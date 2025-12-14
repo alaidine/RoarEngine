@@ -44,3 +44,9 @@ struct InputController{};
 struct Tag{
     bool isPlayer;
 };
+
+struct MissileTag{};
+
+struct playerCooldown {
+    bool canFire;
+};
