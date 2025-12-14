@@ -50,3 +50,15 @@ struct MissileTag{};
 struct playerCooldown {
     bool canFire;
 };
+
+// Networked client component for multiplayer
+struct NetworkedClient {
+    uint32_t client_id;
+    bool is_local;
+};
+
+// Tag to identify local player entity
+struct LocalPlayerTag {};
+
+// Tag to identify remote player entities
+struct RemotePlayerTag {};

@@ -7,12 +7,11 @@ Client::Client()
     m_disconnected = false;      // Got disconnected from the server
     m_spawned = false;           // Has spawned
     m_serverCloseCode = 0;       // The server code used when closing the connection
+    m_localClientId = 0;
     m_currentScreen = TITLE;
-    m_clients = { 0 };
     m_updatedIds = { 0 };
     m_clientCount = 0;
     m_fireMissileKeyPressed = false;
-    m_localClientState = { 0 };
     m_tickDt = 1.0f / TICK_RATE; // Tick delta time (in seconds)
     m_acc = 0;
     m_letterCount = 0;
@@ -21,6 +20,7 @@ Client::Client()
     m_displayHUD = false;
     m_player = { 0 };
     m_background = { 0 };
+    m_localPlayerEntity = 0;
 
     m_missileAnimationRectangles[0] = { 0, 128, 25, 22 };
     m_missileAnimationRectangles[1] = { 25, 128, 31, 22 };
@@ -44,16 +44,49 @@ Client::~Client()
     CloseWindow();
 }
 
+void Client::InitECS(void)
+{
+    m_ecsCore.Init();
+
+    // Register all components needed for networked clients
+    MiniBuilder::RegisterComponentBuilder registerBuilder;
+    registerBuilder.RegisterComponents<
+        Position,
+        Sprite,
+        PlayerSprite,
+        AnimationComponent,
+        InputController,
+        Tag,
+        MissileTag,
+        playerCooldown,
+        NetworkedClient,
+        LocalPlayerTag,
+        RemotePlayerTag
+    >(m_ecsCore);
+
+    // Register systems
+    m_clientRendererSystem = m_ecsCore.RegisterSystem<ClientRendererSystem>();
+    m_clientRendererSystem->order = 1;
+    m_clientRendererSystem->SetPlayerTexture(&m_player);
+
+    // Set system signatures
+    Signature clientRendererSignature;
+    clientRendererSignature.set(m_ecsCore.GetComponentType<Position>(), true);
+    clientRendererSignature.set(m_ecsCore.GetComponentType<Sprite>(), true);
+    clientRendererSignature.set(m_ecsCore.GetComponentType<AnimationComponent>(), true);
+    clientRendererSignature.set(m_ecsCore.GetComponentType<NetworkedClient>(), true);
+    m_ecsCore.SetSystemSignature<ClientRendererSystem>(clientRendererSignature);
+}
+
 void Client::SpawnLocalClient(int x, int y, uint32_t client_id)
 {
     TraceLog(LOG_INFO, "Received spawn message, position: (%d, %d), client id: %d", x, y, client_id);
 
-    // Update the local client state based on spawn info sent by the server
-    m_localClientState.client_id = client_id;
-    m_localClientState.x = x;
-    m_localClientState.y = y;
-    m_localClientState.missile_count = 0;
-    memset(m_localClientState.missiles, 0, MAX_MISSILES_CLIENT);
+    m_localClientId = client_id;
+
+    // Create local player entity using ECS
+    m_localPlayerEntity = Prefab::MakeClient(m_ecsCore, (float)x, (float)y, client_id, true, m_player);
+    m_clientEntities[client_id] = m_localPlayerEntity;
 
     m_spawned = true;
 }
@@ -91,13 +124,7 @@ void Client::HandleDisconnection(void)
 
 bool Client::ClientExists(uint32_t client_id)
 {
-    for (int i = 0; i < MAX_CLIENTS - 1; i++)
-    {
-        if (m_clients[i] && m_clients[i]->client_id == client_id)
-            return true;
-    }
-
-    return false;
+    return m_clientEntities.find(client_id) != m_clientEntities.end();
 }
 
 void Client::CreateClient(ClientState state)
@@ -105,87 +132,59 @@ void Client::CreateClient(ClientState state)
     TraceLog(LOG_DEBUG, "CreateClient %d", state.client_id);
     assert(m_clientCount < MAX_CLIENTS - 1);
 
-    ClientState* client = NULL;
-
-    // Create a new remote client state and store it in the remote clients array at the first free slot found
-    for (int i = 0; i < MAX_CLIENTS - 1; i++)
-    {
-        if (m_clients[i] == NULL)
-        {
-            client = (ClientState*)malloc(sizeof(ClientState));
-            m_clients[i] = client;
-
-            break;
-        }
-    }
-
-    assert(client != NULL);
-
-    // Fill the newly created client state with client state info received from the server
-    memcpy(client, &state, sizeof(ClientState));
-
-    client->missile_count = 0;
-    memset(client->missiles, 0, MAX_MISSILES_CLIENT);
+    // Create a new remote client entity using ECS
+    Entity clientEntity = Prefab::MakeClient(m_ecsCore, (float)state.x, (float)state.y, state.client_id, false, m_player);
+    m_clientEntities[state.client_id] = clientEntity;
 
     m_clientCount++;
 
-    TraceLog(LOG_INFO, "New remote client (ID: %d)", client->client_id);
+    TraceLog(LOG_INFO, "New remote client (ID: %d)", state.client_id);
 }
 
 void Client::UpdateClient(ClientState state)
 {
-    ClientState* client = NULL;
-
-    // Find the client matching the client id of the received remote client state
-    for (int i = 0; i < MAX_CLIENTS - 1; i++)
-    {
-        if (m_clients[i] && m_clients[i]->client_id == state.client_id)
-        {
-            client = m_clients[i];
-
-            break;
-        }
+    auto it = m_clientEntities.find(state.client_id);
+    if (it == m_clientEntities.end()) {
+        TraceLog(LOG_WARNING, "UpdateClient: client_id %d not found", state.client_id);
+        return;
     }
 
-    assert(client != NULL);
+    Entity entity = it->second;
 
-    // Update the client state with the latest client state info received from the server
-    memcpy(client, &state, sizeof(ClientState));
+    // Update the position component with the latest state from the server
+    auto& pos = m_ecsCore.GetComponent<Position>(entity);
+    pos.position.x = (float)state.x;
+    pos.position.y = (float)state.y;
 }
 
 void Client::DestroyClient(uint32_t client_id)
 {
-    // Find the client matching the client id and destroy it
-    for (int i = 0; i < MAX_CLIENTS - 1; i++)
+    auto it = m_clientEntities.find(client_id);
+    if (it != m_clientEntities.end())
     {
-        ClientState* client = m_clients[i];
+        TraceLog(LOG_INFO, "Destroy disconnected client (ID: %d)", client_id);
 
-        if (client && client->client_id == client_id)
-        {
-            TraceLog(LOG_INFO, "Destroy disconnected client (ID: %d)", client->client_id);
-
-            free(client);
-            m_clients[i] = NULL;
-            m_clientCount--;
-
-            return;
-        }
+        m_ecsCore.DestroyEntity(it->second);
+        m_clientEntities.erase(it);
+        m_clientCount--;
     }
 }
 
 void Client::DestroyDisconnectedClients(void)
 {
     /* 
-     * Loop over all remote client states and remove the one that have not
+     * Loop over all remote client entities and remove the ones that have not
      * been updated with the last received game state.
      * This is how we detect disconnected clients.
      */
-    for (int i = 0; i < MAX_CLIENTS - 1; i++)
+    std::vector<uint32_t> toDestroy;
+
+    for (auto& [client_id, entity] : m_clientEntities)
     {
-        if (m_clients[i] == NULL)
+        // Skip local client
+        if (client_id == m_localClientId)
             continue;
 
-        uint32_t client_id = m_clients[i]->client_id;
         bool disconnected = true;
 
         for (int j = 0; j < MAX_CLIENTS; j++)
@@ -198,7 +197,12 @@ void Client::DestroyDisconnectedClients(void)
         }
 
         if (disconnected)
-            DestroyClient(client_id);
+            toDestroy.push_back(client_id);
+    }
+
+    for (uint32_t client_id : toDestroy)
+    {
+        DestroyClient(client_id);
     }
 }
 
@@ -217,7 +221,7 @@ void Client::HandleGameStateMessage(GameStateMessage* msg)
         ClientState state = msg->client_states[i];
 
         // Ignore the state of the local client
-        if (state.client_id != m_localClientState.client_id)
+        if (state.client_id != m_localClientId)
         {
             // If the client already exists we update it with the latest received state
             if (ClientExists(state.client_id))
@@ -274,9 +278,12 @@ int Client::SendPositionUpdate(void)
 {
     UpdateStateMessage* msg = UpdateStateMessage_Create();
 
+    // Get position from local player entity
+    auto& pos = m_ecsCore.GetComponent<Position>(m_localPlayerEntity);
+
     // Fill message data
-    msg->x = m_localClientState.x;
-    msg->y = m_localClientState.y;
+    msg->x = (int)pos.position.x;
+    msg->y = (int)pos.position.y;
     msg->missile_count = std::min((unsigned int)m_missiles.size(), (unsigned int)MAX_MISSILES_CLIENT);
     memcpy(msg->missiles, m_missiles.data(), msg->missile_count * sizeof(Missile));
 
@@ -292,6 +299,9 @@ int Client::UpdateGameplay(void)
     if (!m_spawned)
         return 0;
 
+    // Get local player position component
+    auto& pos = m_ecsCore.GetComponent<Position>(m_localPlayerEntity);
+
     // Firing missile
     if (IsKeyDown(KEY_SPACE) && !m_fireMissileKeyPressed)
     {
@@ -305,14 +315,14 @@ int Client::UpdateGameplay(void)
 
     // Movement code
     if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W))
-        m_localClientState.y = MAX(0, m_localClientState.y - 5);
+        pos.position.y = MAX(0, pos.position.y - 5);
     else if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S))
-        m_localClientState.y = MIN(GAME_HEIGHT - 50, m_localClientState.y + 5);
+        pos.position.y = MIN(GAME_HEIGHT - 50, pos.position.y + 5);
 
     if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))
-        m_localClientState.x = MAX(0, m_localClientState.x - 5);
+        pos.position.x = MAX(0, pos.position.x - 5);
     else if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))
-        m_localClientState.x = MIN(GAME_WIDTH - 50, m_localClientState.x + 5);
+        pos.position.x = MIN(GAME_WIDTH - 50, pos.position.x + 5);
 
     // Send the latest local client state to the server
     if (SendPositionUpdate() < 0)
@@ -325,23 +335,9 @@ int Client::UpdateGameplay(void)
     return 0;
 }
 
-void Client::DrawClient(ClientState* state, bool is_local)
+void Client::DrawClient(Entity entity)
 {
-    float frameWidth = 32;
-    float frameHeight = 22.0f;
-    Rectangle sourceRec = { 0.0f, 30.0f, frameWidth, frameHeight };
-    Rectangle rec = { (float)state->x, (float)state->y, frameWidth * 2.0f, frameHeight * 2.0f };
-    Rectangle destRec = { (float)state->x, (float)state->y, frameWidth * 2.0f, frameHeight * 2.0f};
-    Vector2 origin = { 0.0f, 0.0f };
-
-    // NOTE: Using DrawTexturePro() we can easily rotate and scale the part of the texture we draw
-    // source_rect defines the part of the texture we use for drawing
-    // dest_rect defines the rectangle where our texture part will fit (scaling it to fit)
-    // origin defines the point of the texture used as reference for rotation and scaling
-    // rotation defines the texture rotation (using origin as rotation point)
-    DrawTexturePro(m_player, sourceRec, destRec, origin, 0.0f, WHITE);
-    if (is_local)
-        DrawRectangleLinesEx(rec, 3, DARKBROWN);
+    m_clientRendererSystem->RenderClient(m_ecsCore, entity);
 }
 
 void Client::DrawHUD(void)
@@ -392,15 +388,11 @@ void Client::DrawGameplay(void)
         // Start by drawing the background
         DrawBackground();
 
-        // Draw the remote clients
-        for (int i = 0; i < MAX_CLIENTS - 1; i++)
+        // Draw all client entities using ECS
+        for (auto& [client_id, entity] : m_clientEntities)
         {
-            if (m_clients[i])
-                DrawClient(m_clients[i], false);
+            DrawClient(entity);
         }
-
-        // Then draw the local client
-        DrawClient(&m_localClientState, true);
 
         // Draw the missiles
         DrawMissiles();
@@ -592,6 +584,9 @@ void Client::Init(void)
     // Load textures
     m_player = LoadTexture("resources/sprites/player_r-9c_war-head.png");
     m_background = LoadTexture("resources/sprites/space_background.png");
+
+    // Initialize ECS after textures are loaded
+    InitECS();
 }
 
 void Client::Run(void)
@@ -604,6 +599,9 @@ void Client::Run(void)
 
 void Client::Fire(void)
 {
+    // Get local player position
+    auto& playerPos = m_ecsCore.GetComponent<Position>(m_localPlayerEntity);
+
     Missile missile = {
         .pos = { 0 },
         .rect = { 0 },
@@ -612,10 +610,10 @@ void Client::Fire(void)
         .framesCounter = 0
     };
 
-    missile.pos.x = m_localClientState.x;
-    missile.pos.y = m_localClientState.y;
-    missile.rect.x= m_missileAnimationRectangles[missile.currentFrame].x;
-    missile.rect.y= m_missileAnimationRectangles[missile.currentFrame].y;
+    missile.pos.x = playerPos.position.x;
+    missile.pos.y = playerPos.position.y;
+    missile.rect.x = m_missileAnimationRectangles[missile.currentFrame].x;
+    missile.rect.y = m_missileAnimationRectangles[missile.currentFrame].y;
     missile.rect.height = m_missileAnimationRectangles[missile.currentFrame].height;
     missile.rect.width = m_missileAnimationRectangles[missile.currentFrame].width;
     m_missiles.push_back(missile);
@@ -660,23 +658,15 @@ void Client::DrawMissiles(void)
         DrawTexturePro(m_player, sourceRec, destRec, origin, 0.0f, WHITE);
     }
 
-    for (int i = 0; i < MAX_CLIENTS - 1; i++)
+    // Draw missiles from remote clients
+    for (auto& [client_id, entity] : m_clientEntities)
     {
-        if (m_clients[i])
-        {
-            for (int j = 0; j < m_clients[i]->missile_count; j++)
-            {
-                Missile missile = m_clients[i]->missiles[j];
-                float frameWidth = missile.rect.width;
-                float frameHeight = missile.rect.height;
-                Rectangle sourceRec = { missile.rect.x, missile.rect.y, frameWidth, frameHeight };
-                Rectangle rec = { (float)missile.pos.x, (float)missile.pos.y, frameWidth * 2.0f, frameHeight * 2.0f };
-                Rectangle destRec = { (float)missile.pos.x, (float)missile.pos.y, frameWidth * 2.0f, frameHeight * 2.0f };
-                Vector2 origin = { 0.0f, 0.0f };
+        // Skip local client missiles (already drawn above)
+        if (client_id == m_localClientId)
+            continue;
 
-                DrawTexturePro(m_player, sourceRec, destRec, origin, 0.0f, WHITE);
-            }
-        }
+        // Remote client missiles would need to be synced via network
+        // This is a placeholder for future network missile sync
     }
 }
 

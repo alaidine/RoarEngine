@@ -10,7 +10,7 @@
 
 Core _core;
 
-int main() {
+int foo() {
     _core.Init();
 
     const int screenWidth = 800;

@@ -13,6 +13,7 @@ target_link_libraries(${CORE_LIB} PUBLIC
     ${LUA_LIBRARY}
     sol2::sol2
     box2d::box2d
+    ${ECS_LIB}
 )
 
 # Include directories

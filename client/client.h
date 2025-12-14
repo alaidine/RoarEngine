@@ -3,9 +3,16 @@
 #include <vector>
 #include <array>
 #include <memory>
+#include <unordered_map>
 #include <sol/sol.hpp>
 
 #include "shared.h"
+
+// ECS includes
+#include "../ECS/Core.hpp"
+#include "../ECS/Prefab.hpp"
+#include "../ECS/Builder/Builder.hpp"
+#include "../ECS/System/ClientRendererSystem.hpp"
 
 #define TARGET_FPS 100
 #define MAX_INPUT_CHARS 15
@@ -20,14 +27,19 @@ private:
 		GAMEPLAY
 	} GameScreen;
 
+	// ECS Core
+	Core m_ecsCore;
+	std::shared_ptr<ClientRendererSystem> m_clientRendererSystem;
+	Entity m_localPlayerEntity;
+	std::unordered_map<uint32_t, Entity> m_clientEntities; // Maps client_id to Entity
+
 	bool m_clientInitialized;
 	bool m_connected;               // Connected to the server
 	bool m_disconnected;            // Got disconnected from the server
 	bool m_spawned;                 // Has spawned
 	int m_serverCloseCode;          // The server code used when closing the connection
-	ClientState m_localClientState; // The state of the local client
+	uint32_t m_localClientId;       // Local client ID from server
 	GameScreen m_currentScreen;
-	std::array<ClientState*, MAX_CLIENTS - 1> m_clients;
 	std::array<int, MAX_CLIENTS> m_updatedIds;
 	std::array<Rectangle, 5> m_missileAnimationRectangles;
 	std::vector<Missile> m_missiles;
@@ -42,6 +54,10 @@ private:
 	bool m_displayHUD;
 	Texture2D m_player;
 	Texture2D m_background;
+
+	// ECS initialization
+	void InitECS(void);
+	
 public:
 	Client();
 	~Client();
@@ -71,7 +87,7 @@ public:
 	void UpdateClient(ClientState state);
 	
 	void UpdateAndDraw(void);
-	void DrawClient(ClientState* state, bool is_local);
+	void DrawClient(Entity entity);
 	void DrawHUD(void);
 	void DrawGameplay(void);
 	void DrawBackground(void);

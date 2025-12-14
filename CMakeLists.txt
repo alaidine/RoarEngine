@@ -14,6 +14,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 # Project targets
 set(CORE_LIB r-type_core)
+set(ECS_LIB r-type_ecs)
 set(CLIENT r-type_client)
 set(SERVER r-type_server)
 
@@ -55,6 +56,7 @@ else()
 endif()
 
 # Add subdirectories
+add_subdirectory(ECS)
 add_subdirectory(core)
 add_subdirectory(client)
 add_subdirectory(server)
