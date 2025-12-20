@@ -1803,7 +1803,7 @@ void VulkanRenderer::DrawTextureRec(Rectangle rectangle, glm::vec2 position) {
     float u0 = rectangle.x / tex_w;
     float u1 = (rectangle.x + rectangle.width) / tex_w;
 
-    float v0 = (rectangle.y / tex_h);
+    float v0 = rectangle.y / tex_h;
     float v1 = (rectangle.y + rectangle.height) / tex_h;
 
     uint32_t vertexOffset = static_cast<uint32_t>(textureVertices.size());
