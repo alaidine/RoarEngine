@@ -264,7 +264,7 @@ void VulkanBase::updateOverlay() {
     ImGui::NewFrame();
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
     ImGui::SetNextWindowPos(ImVec2(10 * ui.scale, 10 * ui.scale));
-    ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiSetCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_FirstUseEver);
     ImGui::Begin("Vulkan Example", nullptr,
                  ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
     ImGui::TextUnformatted(title.c_str());
@@ -1742,6 +1742,12 @@ void VulkanRenderer::StartDrawing() {
     textureIndices.clear();
     textureVertices.clear();
 
+    // Ensure previous GPU work finished using the buffers before destroying them.
+    // This prevents vkDestroyBuffer() on a buffer still referenced by a submitted command buffer.
+    if (device != VK_NULL_HANDLE) {
+        vkDeviceWaitIdle(device);
+    }
+
     vertexBuffer.destroy();
     indexBuffer.destroy();
 }
@@ -1776,6 +1782,8 @@ void VulkanRenderer::EndDrawing() {
     // Clean up
     stagingBuffers.vertices.destroy();
     stagingBuffers.indices.destroy();
+
+    indexCount = static_cast<uint32_t>(textureIndices.size());
 
     if (prepared && !IsIconic(window)) {
         nextFrame();

@@ -381,7 +381,7 @@ bool UIOverlay::checkBox(const char *caption, int32_t *value) {
 bool UIOverlay::radioButton(const char *caption, bool value) { return ImGui::RadioButton(caption, value); }
 
 bool UIOverlay::inputFloat(const char *caption, float *value, float step, uint32_t precision) {
-    return ImGui::InputFloat(caption, value, step, step * 10.0f, precision);
+    return ImGui::InputFloat(caption, value, step, step * 10.0f);
 }
 
 bool UIOverlay::sliderFloat(const char *caption, float *value, float min, float max) {

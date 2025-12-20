@@ -23,16 +23,7 @@ add_library(renderer
     VulkanUIOverlay.cpp
     VulkanUIOverlay.h
     Renderer.h
-    Renderer.cpp
-    imconfig.h
-    imgui.cpp
-    imgui.h
-    imgui_draw.cpp
-    imgui_demo.cpp
-    imgui_widgets.cpp
-    imgui_internal.h
-    imstb_rectpack.h
-    imstb_textedit.h
-    imstb_truetype.h)
+    Renderer.cpp)
 
-target_link_libraries(renderer PRIVATE Vulkan::Vulkan glfw glm::glm ktx)
+target_link_libraries(renderer PRIVATE Vulkan::Vulkan glfw glm::glm KTX::ktx)
+target_link_libraries(renderer PUBLIC imgui::imgui)

@@ -20,7 +20,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     renderer->prepare();
     renderer->Init();
 
-    rt::Rectangle rect = {0, 0, 50, 50}; // Top-left quadrant (should show top-left of image)
+    rt::Rectangle rect = {0, 0, 100, 100}; // Top-left quadrant (should show top-left of image)
 
     MSG msg;
     bool quitMessageReceived = false;

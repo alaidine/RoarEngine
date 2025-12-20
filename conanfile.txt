@@ -1,0 +1,12 @@
+[requires]
+glfw/3.4
+glm/1.0.1
+ktx/4.3.2
+imgui/1.92.5-docking
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout
