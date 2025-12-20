@@ -1,5 +1,4 @@
 rem Use this batch file to build rt-engine for Visual Studio
 rmdir /s /q build
-mkdir build
-cd build
-cmake ..
+conan install . --output-folder=build --build=missing -s compiler.cppstd=20 -s build_type=Debug
+cmake --preset conan-default
