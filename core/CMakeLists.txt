@@ -1,14 +1,16 @@
 add_library(core
-    event.h
-    entrypoints.h
-    inputevents.h
-    window.cpp
-    window.h
-    windowevents.h
-    application.cpp
-    application.h
-    layer.cpp
-    layer.h)
+    Event.h
+    Entrypoints.h
+    Inputevents.h
+    Window.cpp
+    Window.h
+    Windowevents.h
+    Application.cpp
+    Application.h
+    Layer.cpp
+    Layer.h
+    SceneManager.cpp
+    SceneManager.h)
 
 add_executable(CoreTests
     CoreTests.cpp
