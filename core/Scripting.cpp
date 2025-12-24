@@ -1,11 +1,12 @@
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 
-#include <string>
 #include <fstream>
+#include <string>
 
 MonoDomain *sRootDomain = nullptr;
 MonoDomain *sAppDomain = nullptr;
+MonoAssembly *sAppAssembly = nullptr;
 
 void InitMono() {
     mono_set_assemblies_path("mono/lib");
@@ -72,20 +73,87 @@ MonoAssembly *LoadCSharpAssembly(const std::string &assemblyPath) {
     return assembly;
 }
 
-void PrintAssemblyTypes(MonoAssembly* assembly)
-{
-    MonoImage* image = mono_assembly_get_image(assembly);
-    const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+void PrintAssemblyTypes(MonoAssembly *assembly) {
+    MonoImage *image = mono_assembly_get_image(assembly);
+    const MonoTableInfo *typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
     int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
 
-    for (int32_t i = 0; i < numTypes; i++)
-    {
+    for (int32_t i = 0; i < numTypes; i++) {
         uint32_t cols[MONO_TYPEDEF_SIZE];
         mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
 
-        const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
-        const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+        const char *nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
+        const char *name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
 
         printf("%s.%s\n", nameSpace, name);
     }
 }
+
+MonoClass *GetClassInAssembly(MonoAssembly *assembly, const char *namespaceName, const char *className) {
+    MonoImage *image = mono_assembly_get_image(assembly);
+    MonoClass *klass = mono_class_from_name(image, namespaceName, className);
+
+    if (klass == nullptr) {
+        // Log error here
+        return nullptr;
+    }
+
+    return klass;
+}
+
+MonoObject *InstantiateClass(const char *namespaceName, const char *className) {
+    // Get a reference to the class we want to instantiate
+    MonoClass *testingClass = GetClassInAssembly(sAppAssembly, "", "CSharpTesting");
+
+    // Allocate an instance of our class
+    MonoObject *classInstance = mono_object_new(sAppDomain, testingClass);
+
+    if (classInstance == nullptr) {
+        // Log error here and abort
+    }
+
+    // Call the parameterless (default) constructor
+    mono_runtime_object_init(classInstance);
+}
+
+void CallPrintFloatVarMethod(MonoObject *objectInstance) {
+    // Get the MonoClass pointer from the instance
+    MonoClass *instanceClass = mono_object_get_class(objectInstance);
+
+    // Get a reference to the method in the class
+    MonoMethod *method = mono_class_get_method_from_name(instanceClass, "PrintFloatVar", 0);
+
+    if (method == nullptr) {
+        // No method called "PrintFloatVar" with 0 parameters in the class, log error or something
+        return;
+    }
+
+    // Call the C# method on the objectInstance instance, and get any potential exceptions
+    MonoObject *exception = nullptr;
+    mono_runtime_invoke(method, objectInstance, nullptr, &exception);
+
+    // TODO: Handle the exception
+}
+
+void CallIncrementFloatVarMethod(MonoObject *objectInstance, float value) {
+    // Get the MonoClass pointer from the instance
+    MonoClass *instanceClass = mono_object_get_class(objectInstance);
+
+    // Get a reference to the method in the class
+    MonoMethod *method = mono_class_get_method_from_name(instanceClass, "IncrementFloatVar", 1);
+
+    if (method == nullptr) {
+        // No method called "IncrementFloatVar" with 1 parameter in the class, log error or something
+        return;
+    }
+
+    // Call the C# method on the objectInstance instance, and get any potential exceptions
+    MonoObject *exception = nullptr;
+    void *params[] = {&value};
+
+    mono_runtime_invoke(method, objectInstance, params, &exception);
+
+    // TODO: Handle the exception
+}
+
+void PrintFromCpp() { printf("Hello from native C++\n"); }

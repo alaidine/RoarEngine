@@ -3,10 +3,9 @@
 
 #include "RTEConfig.h"
 
-BOOST_AUTO_TEST_CASE(Lexer)
-{
+BOOST_AUTO_TEST_CASE(Lexer) {
     RTELexer lexer;
-    const char* str = "type scene\n";
+    const char *str = "type scene\n";
 
     lexer.fromString(str);
 

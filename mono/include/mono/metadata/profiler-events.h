@@ -11,7 +11,8 @@
  * MONO_PROFILER_EVENT_2(name, type, arg1_type, arg1_name, arg2_type, arg2_name)
  * MONO_PROFILER_EVENT_3(name, type, arg1_type, arg1_name, arg2_type, arg2_name, arg3_type, arg3_name)
  * MONO_PROFILER_EVENT_4(name, type, arg1_type, arg1_name, arg2_type, arg2_name, arg3_type, arg3_name, arg4_type, arg4_name)
- * MONO_PROFILER_EVENT_5(name, type, arg1_type, arg1_name, arg2_type, arg2_name, arg3_type, arg3_name, arg4_type, arg4_name, arg5_type, arg5_name)
+ * MONO_PROFILER_EVENT_5(name, type, arg1_type, arg1_name, arg2_type, arg2_name, arg3_type, arg3_name, arg4_type, arg4_name,
+ * arg5_type, arg5_name)
  *
  * To add new callbacks to the API, simply add a line in this file and use
  * MONO_PROFILER_RAISE to raise the event wherever.
@@ -49,7 +50,8 @@ MONO_PROFILER_EVENT_1(jit_failed, JitFailed, MonoMethod *, method)
 MONO_PROFILER_EVENT_2(jit_done, JitDone, MonoMethod *, method, MonoJitInfo *, jinfo)
 MONO_PROFILER_EVENT_2(jit_chunk_created, JitChunkCreated, const mono_byte *, chunk, uintptr_t, size)
 MONO_PROFILER_EVENT_1(jit_chunk_destroyed, JitChunkDestroyed, const mono_byte *, chunk)
-MONO_PROFILER_EVENT_4(jit_code_buffer, JitCodeBuffer, const mono_byte *, buffer, uint64_t, size, MonoProfilerCodeBufferType, type, const void *, data)
+MONO_PROFILER_EVENT_4(jit_code_buffer, JitCodeBuffer, const mono_byte *, buffer, uint64_t, size, MonoProfilerCodeBufferType, type,
+                      const void *, data)
 
 MONO_PROFILER_EVENT_1(class_loading, ClassLoading, MonoClass *, klass)
 MONO_PROFILER_EVENT_1(class_failed, ClassFailed, MonoClass *, klass)
@@ -79,7 +81,8 @@ MONO_PROFILER_EVENT_1(method_begin_invoke, MethodBeginInvoke, MonoMethod *, meth
 MONO_PROFILER_EVENT_1(method_end_invoke, MethodEndInvoke, MonoMethod *, method)
 
 MONO_PROFILER_EVENT_1(exception_throw, ExceptionThrow, MonoObject *, exception)
-MONO_PROFILER_EVENT_4(exception_clause, ExceptionClause, MonoMethod *, method, uint32_t, index, MonoExceptionEnum, type, MonoObject *, exception)
+MONO_PROFILER_EVENT_4(exception_clause, ExceptionClause, MonoMethod *, method, uint32_t, index, MonoExceptionEnum, type,
+                      MonoObject *, exception)
 
 MONO_PROFILER_EVENT_3(gc_event, GCEvent2, MonoProfilerGCEvent, event, uint32_t, generation, mono_bool, is_serial)
 MONO_PROFILER_EVENT_1(gc_allocation, GCAllocation, MonoObject *, object)
@@ -91,7 +94,8 @@ MONO_PROFILER_EVENT_0(gc_finalizing, GCFinalizing)
 MONO_PROFILER_EVENT_0(gc_finalized, GCFinalized)
 MONO_PROFILER_EVENT_1(gc_finalizing_object, GCFinalizingObject, MonoObject *, object)
 MONO_PROFILER_EVENT_1(gc_finalized_object, GCFinalizedObject, MonoObject *, object)
-MONO_PROFILER_EVENT_5(gc_root_register, RootRegister, const mono_byte *, start, uintptr_t, size, MonoGCRootSource, source, const void *, key, const char *, name)
+MONO_PROFILER_EVENT_5(gc_root_register, RootRegister, const mono_byte *, start, uintptr_t, size, MonoGCRootSource, source,
+                      const void *, key, const char *, name)
 MONO_PROFILER_EVENT_1(gc_root_unregister, RootUnregister, const mono_byte *, start)
 MONO_PROFILER_EVENT_3(gc_roots, GCRoots, uint64_t, count, const mono_byte *const *, addresses, MonoObject *const *, objects)
 

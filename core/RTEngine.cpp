@@ -1,8 +1,8 @@
 #include "Application.h"
-#include "Layer.h"
-#include "WindowEvents.h"
-#include "RenderSystem.h"
 #include "ECS.h"
+#include "Layer.h"
+#include "RenderSystem.h"
+#include "WindowEvents.h"
 
 class SceneLayer : public rt::Layer {
   public:
@@ -22,13 +22,8 @@ class SceneLayer : public rt::Layer {
         mRenderSystem->Init(rt::Application::Get().mRenderer);
 
         auto entity = mScene.CreateEntity();
-        mScene.AddComponent(entity, RectangleShape{
-            .color = {1.0f, 1.0f, 1.0f}
-        });
-        mScene.AddComponent(entity, Transform2D{
-            {0.0f, 0.0f},
-            {10.0f, 10.0f}
-        });
+        mScene.AddComponent(entity, RectangleShape{.color = {1.0f, 1.0f, 1.0f}});
+        mScene.AddComponent(entity, Transform2D{{0.0f, 0.0f}, {10.0f, 10.0f}});
     }
     ~SceneLayer() {}
 
@@ -40,9 +35,7 @@ class SceneLayer : public rt::Layer {
         });
     }
 
-    void OnUpdate(float st) override {
-        mRenderSystem->Update(mScene, st);
-    }
+    void OnUpdate(float st) override { mRenderSystem->Update(mScene, st); }
 
     void OnRender() override {}
 

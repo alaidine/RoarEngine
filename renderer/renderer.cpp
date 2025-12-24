@@ -2071,10 +2071,9 @@ void VulkanRenderer::InitWindowInfo(HWND win, HINSTANCE instance, uint32_t windo
 void VulkanRenderer::StartDrawing() {
     textureIndices.clear();
     textureVertices.clear();
-    
+
     rectangleIndices.clear();
     rectangleVertices.clear();
-
 
     // Ensure previous GPU work finished using the buffers before destroying them.
     // This prevents vkDestroyBuffer() on a buffer still referenced by a submitted command buffer.

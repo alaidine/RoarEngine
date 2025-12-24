@@ -4,11 +4,9 @@ RenderSystem::RenderSystem() {}
 
 RenderSystem::~RenderSystem() {}
 
-void RenderSystem::Init(std::shared_ptr<rt::VulkanRenderer> renderer) {
-    mRenderer = renderer;
-}
+void RenderSystem::Init(std::shared_ptr<rt::VulkanRenderer> renderer) { mRenderer = renderer; }
 
-void RenderSystem::Update(Scene& scene, float dt) {
+void RenderSystem::Update(Scene &scene, float dt) {
     for (auto const &entity : mEntities) {
         auto &rectangleShape = scene.GetComponent<RectangleShape>(entity);
         auto &transform = scene.GetComponent<Transform2D>(entity);

@@ -457,9 +457,8 @@ class VulkanRenderer : public VulkanBase {
     void rectanglePreparePipelines();
     void rectangleSetupDescriptors();
 
-
     // Prepare and initialize uniform buffer containing shader uniforms
-	uint32_t getMemoryTypeIndex(uint32_t typeBits, VkMemoryPropertyFlags properties);
+    uint32_t getMemoryTypeIndex(uint32_t typeBits, VkMemoryPropertyFlags properties);
     void prepareUniformBuffers();
     void updateUniformBuffers();
     void prepare();
