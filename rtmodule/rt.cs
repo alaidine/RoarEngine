@@ -12,6 +12,17 @@ namespace RTEngine
             Console.WriteLine("Main Contructor!!!!");
         }
 
+        public void PrintInt(int value)
+        {
+            Console.WriteLine($"C# says: {value}");
+        
+        }
+        
+        public void PrintInts(int value1, int value2)
+        {
+            Console.WriteLine($"C# says: {value1} and {value2}");
+        }
+
         public void PrintMessage()
         {
             Console.WriteLine("Hello world from C#!");
@@ -19,7 +30,7 @@ namespace RTEngine
 
         public void PrintCustomMessage(string message)
         {
-            Console.WriteLine(message);
+            Console.WriteLine($"C# says: {message}");
         }
     }
 

@@ -45,6 +45,7 @@ Application::Application(const ApplicationSpecification &specification, HINSTANC
 }
 
 Application::~Application() {
+    Scripting::Shutdown();
     mWindow->Destroy();
     sApplication = nullptr;
 }

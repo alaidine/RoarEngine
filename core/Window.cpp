@@ -8,7 +8,7 @@
 
 namespace rt {
 
-Window *sWindow;
+Window *sWindow = nullptr;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if (sWindow != NULL) {

@@ -35,7 +35,6 @@ add_subdirectory(ecs)
 add_subdirectory(core)
 add_subdirectory(samples)
 add_subdirectory(editor)
-add_subdirectory(csharp-sandbox)
 add_subdirectory(rtmodule)
 
 set_target_properties(samples PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
