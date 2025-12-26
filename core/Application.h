@@ -25,7 +25,6 @@ struct ApplicationSpecification {
 class Application {
   public:
     Application(const ApplicationSpecification &specification = ApplicationSpecification());
-    Application(const ApplicationSpecification &specification, HINSTANCE hInstance);
 
     ~Application();
 
@@ -56,8 +55,6 @@ class Application {
 
     static Application &Get();
     static float GetTime();
-
-    std::shared_ptr<VulkanRenderer> mRenderer;
 
   private:
     ApplicationSpecification mSpecification;

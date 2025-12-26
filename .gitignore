@@ -4,3 +4,5 @@ validation_output.txt
 RTEngine.exe
 .vs/
 .vscode/
+out/
+pong/

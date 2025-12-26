@@ -22,24 +22,6 @@ Application::Application(const ApplicationSpecification &specification) : mSpeci
     mSpecification.WindowSpec.EventCallback = [this](Event &event) { RaiseEvent(event); };
     mWindow = std::make_shared<Window>(mSpecification.WindowSpec);
     mWindow->Create();
-}
-
-Application::Application(const ApplicationSpecification &specification, HINSTANCE hInstance) : mSpecification(specification) {
-    sApplication = this;
-
-    if (mSpecification.WindowSpec.Title.empty())
-        mSpecification.WindowSpec.Title = mSpecification.Title;
-    if (mSpecification.WindowSpec.Name.empty())
-        mSpecification.WindowSpec.Name = mSpecification.Name;
-    mSpecification.WindowSpec.EventCallback = [this](Event &event) { RaiseEvent(event); };
-    mWindow = std::make_shared<Window>(mSpecification.WindowSpec);
-    mWindow->Create(hInstance);
-
-    mRenderer = std::make_shared<rt::VulkanRenderer>();
-    mRenderer->InitWindowInfo(GetWindow()->window, hInstance, mSpecification.WindowSpec.Width, mSpecification.WindowSpec.Height);
-    mRenderer->initVulkan();
-    mRenderer->prepare();
-    mRenderer->Init();
 
     Scripting::Init();
 }
@@ -68,9 +50,9 @@ void Application::Run() {
         float timestep = glm::clamp(currentTime - lastTime, 0.001f, 0.1f);
         lastTime = currentTime;
 
-        // Start frame drawing (clears previous frame buffers)
-        mRenderer->StartDrawing();
-
+        // Start frame drawing
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
         // Main layer update here
         for (const std::unique_ptr<Layer> &layer : m_LayerStack)
             layer->OnUpdate(timestep);
@@ -78,9 +60,7 @@ void Application::Run() {
         // NOTE: rendering can be done elsewhere (eg. render thread)
         for (const std::unique_ptr<Layer> &layer : m_LayerStack)
             layer->OnRender();
-        mRenderer->EndDrawing();
-
-        // m_Window->Update();
+        EndDrawing();
     }
 }
 

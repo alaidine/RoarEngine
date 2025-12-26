@@ -1,6 +1,6 @@
-#include "layer.h"
+#include "Layer.h"
 
-#include "application.h"
+#include "Application.h"
 
 namespace rt {
 

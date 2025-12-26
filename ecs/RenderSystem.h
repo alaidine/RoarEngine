@@ -9,9 +9,6 @@ class RenderSystem : public System {
     RenderSystem();
     ~RenderSystem();
 
-    void Init(std::shared_ptr<rt::VulkanRenderer> renderer);
+    void Init();
     void Update(Scene &scene, float dt);
-
-  private:
-    std::shared_ptr<rt::VulkanRenderer> mRenderer;
 };

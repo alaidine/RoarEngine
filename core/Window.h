@@ -1,21 +1,14 @@
 #pragma once
 
-#pragma comment(linker, "/subsystem:windows")
-#include <ShellScalingApi.h>
-#include <fcntl.h>
-#include <io.h>
-#include <windows.h>
-
-#include <GLFW/glfw3.h>
-
-#include "event.h"
+#include "Event.h"
 
 #include <glm/glm.hpp>
 
 #include <functional>
 #include <string>
 
-#include <keycodes.hpp>
+#include "framework.h"
+#include "raylib.h"
 
 namespace rt {
 
@@ -36,7 +29,6 @@ class Window {
     Window(const WindowSpecification &specification = WindowSpecification());
     ~Window();
 
-    HWND Create(HINSTANCE hinstance);
     void Create();
     void Destroy();
 
@@ -50,11 +42,6 @@ class Window {
 
     bool ShouldClose() const;
 
-    void handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-    void OnHandleMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-    GLFWwindow *GetHandle() const { return mHandle; }
-
     struct Settings {
         bool validation = false;
         bool fullscreen = false;
@@ -62,16 +49,10 @@ class Window {
         bool overlay = true;
     } settings;
 
-    HWND window;
-    HINSTANCE windowInstance;
-
-    MSG msg;
     bool quitMessageReceived = false;
 
   private:
     WindowSpecification mSpecification;
-    GLFWwindow *mHandle = nullptr;
-
     std::string getWindowTitle() const;
 
     // Frame counter to display fps

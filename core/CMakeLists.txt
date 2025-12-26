@@ -1,4 +1,5 @@
 add_library(core
+    framework.h
     Scripting.cpp
     Scripting.h
     Event.h
@@ -24,10 +25,10 @@ add_executable(RTEngine
 target_include_directories(core PRIVATE ${CMAKE_SOURCE_DIR}/renderer)
 target_include_directories(core PRIVATE ${CMAKE_SOURCE_DIR}/mono/include)
 target_include_directories(core PRIVATE ${CMAKE_SOURCE_DIR}/ecs)
-target_link_libraries(core PRIVATE ecs Vulkan::Vulkan boost::boost glm::glm glfw KTX::ktx imgui::imgui spdlog::spdlog)
+target_link_libraries(core PRIVATE ecs raylib boost::boost glm::glm imgui::imgui spdlog::spdlog)
 
 target_include_directories(CoreTests PRIVATE ${CMAKE_SOURCE_DIR}/ecs)
-target_link_libraries(CoreTests PRIVATE core Vulkan::Vulkan boost::boost glm::glm glfw KTX::ktx imgui::imgui)
+target_link_libraries(CoreTests PRIVATE core raylib boost::boost glm::glm imgui::imgui)
 
 add_test(NAME TestCore
     COMMAND ${CMAKE_BINARY_DIR}/core/CoreTests)
@@ -39,7 +40,11 @@ target_link_libraries(core PRIVATE "${MONO_SGEN_LIB_PATH}")
 
 target_include_directories(RTEngine PRIVATE ${CMAKE_SOURCE_DIR}/renderer)
 target_include_directories(RTEngine PRIVATE ${CMAKE_SOURCE_DIR}/ecs)
-target_link_libraries(RTEngine PRIVATE core Vulkan::Vulkan boost::boost glm::glm glfw KTX::ktx imgui::imgui)
+target_link_libraries(RTEngine PRIVATE core raylib boost::boost glm::glm imgui::imgui)
+
+if (MSVC)
+    target_link_options(RTEngine PRIVATE /FORCE:MULTIPLE)
+endif()
 
 # copy mono runtime DLL to the RTEngine runtime folder so the debugger/exe can find it
 set(MONO_BIN_DIR "${CMAKE_SOURCE_DIR}/mono/bin")

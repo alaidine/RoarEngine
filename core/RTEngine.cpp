@@ -3,6 +3,7 @@
 #include "Layer.h"
 #include "RenderSystem.h"
 #include "WindowEvents.h"
+#include "framework.h"
 
 class SceneLayer : public rt::Layer {
   public:
@@ -19,21 +20,15 @@ class SceneLayer : public rt::Layer {
             signature.set(mScene.GetComponentType<Transform2D>());
             mScene.SetSystemSignature<RenderSystem>(signature);
         }
-        mRenderSystem->Init(rt::Application::Get().mRenderer);
+        mRenderSystem->Init();
 
         auto entity = mScene.CreateEntity();
-        mScene.AddComponent(entity, RectangleShape{.color = {1.0f, 1.0f, 1.0f}});
+        mScene.AddComponent(entity, RectangleShape{.color = {230, 41, 55, 255}});
         mScene.AddComponent(entity, Transform2D{{0.0f, 0.0f}, {10.0f, 10.0f}});
     }
     ~SceneLayer() {}
 
-    void OnEvent(rt::Event &event) override {
-        rt::EventDispatcher dispatcher(event);
-        dispatcher.Dispatch<rt::WindowClosedEvent>([this](rt::WindowClosedEvent &e) {
-            rt::Application::Get().mRenderer->prepared = false;
-            return false;
-        });
-    }
+    void OnEvent(rt::Event &event) override {}
 
     void OnUpdate(float st) override { mRenderSystem->Update(mScene, st); }
 
@@ -44,16 +39,12 @@ class SceneLayer : public rt::Layer {
     std::shared_ptr<RenderSystem> mRenderSystem;
 };
 
-int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR, _In_ int) {
-    for (int32_t i = 0; i < __argc; i++) {
-        rt::VulkanBase::args.push_back(__argv[i]);
-    };
-
+int main(int argc, char *argv[]) {
     rt::ApplicationSpecification spec;
     spec.Title = "RTEngine";
     spec.Name = "RTEngine";
 
-    rt::Application samples(spec, hInstance);
+    rt::Application samples(spec);
     samples.PushLayer<SceneLayer>();
     samples.Run();
 }

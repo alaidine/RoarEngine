@@ -4,13 +4,12 @@ project(rt-engine LANGUAGES CXX)
 
 include(CTest)
 
-find_package(Vulkan REQUIRED)
 find_package(glm REQUIRED)
-find_package(Ktx REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(imgui REQUIRED)
 find_package(Boost REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(raylib REQUIRED)
 
 # Put all runtime/library/archive outputs into the same directory
 set(RT_ENGINE_OUT_DIR ${CMAKE_BINARY_DIR}/RTEngine)
@@ -34,10 +33,6 @@ add_subdirectory(renderer)
 add_subdirectory(ecs)
 add_subdirectory(core)
 add_subdirectory(samples)
-add_subdirectory(editor)
 add_subdirectory(rtmodule)
 
 set_target_properties(samples PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
-set_target_properties(editor PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
-
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT editor)
