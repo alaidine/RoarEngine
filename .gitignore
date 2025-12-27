@@ -6,3 +6,6 @@ RTEngine.exe
 .vscode/
 out/
 pong/
+
+mono/
+mono_win64.zip

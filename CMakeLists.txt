@@ -11,6 +11,22 @@ find_package(Boost REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(raylib REQUIRED)
 
+include(FetchContent)
+
+FetchContent_Declare(
+  mono_runtime
+  URL      "https://github.com/alaidine/RoarEngine/releases/download/1.0.0/mono_win64.zip"
+  URL_HASH SHA256=4306fd4e4c578f93fd1caa2b2bd917765a3df3927933ae306976b865bdbc853d
+)
+FetchContent_MakeAvailable(mono_runtime)
+
+set(MONO_ROOT "${mono_runtime_SOURCE_DIR}")
+
+set(MONO_INCLUDE_DIR "${MONO_ROOT}/include/")
+set(MONO_LIB_DIR     "${MONO_ROOT}/lib")
+set(MONO_BIN_DIR     "${MONO_ROOT}/bin")
+set(MONO_ASSEMBLIES  "${MONO_ROOT}/lib/mono/4.5")
+
 # Put all runtime/library/archive outputs into the same directory
 set(RT_ENGINE_OUT_DIR ${CMAKE_BINARY_DIR}/RTEngine)
 
