@@ -263,6 +263,8 @@ static void Entity_SetTranslation(uint32_t entity, glm::vec2 *translation) {
     sData->SceneContext->GetComponent<Transform2D>(entity).pos = *translation;
 }
 
+static bool Input_IsKeyDown(int keycode) { return IsKeyDown(keycode); }
+
 } // namespace InternalCalls
 
 void ScriptGlue::RegisterFunctions() {
@@ -271,6 +273,7 @@ void ScriptGlue::RegisterFunctions() {
     ADD_INTERNAL_CALL(NativeLogVectorDot);
     ADD_INTERNAL_CALL(Entity_SetTranslation);
     ADD_INTERNAL_CALL(Entity_GetTranslation);
+    ADD_INTERNAL_CALL(Input_IsKeyDown);
 }
 
 ScriptClass::ScriptClass(const std::string &classNamespace, const std::string &className)

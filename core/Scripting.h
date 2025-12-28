@@ -23,6 +23,7 @@
 #include "Common.h"
 #include "ECS.h"
 #include "Component.h"
+#include "raylib.h"
 
 namespace Roar {
 
