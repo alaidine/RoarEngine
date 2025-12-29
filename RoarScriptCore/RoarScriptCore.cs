@@ -149,19 +149,13 @@ namespace RoarEngine
     public static class InternalCalls
     {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static void NativeLog(string message, int parameter);
+        public extern static bool Entity_HasComponent(UInt32 entityID, Type componentType);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static void NativeLogVector2(ref Vector2 param, out Vector2 vec);
+        public extern static void TransformComponent_GetTranslation(UInt32 entityID, out Vector2 translation);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static float NativeLogVectorDot(ref Vector2 vec);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static void Entity_GetTranslation(UInt32 entityID, out Vector2 translation);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static void Entity_SetTranslation(UInt32 entityID, ref Vector2 translation);
+        public extern static void TransformComponent_SetTranslation(UInt32 entityID, ref Vector2 translation);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public extern static bool Input_IsKeyDown(KeyCode keyCode);
@@ -190,12 +184,47 @@ namespace RoarEngine
         {
             get
             {
-                InternalCalls.Entity_GetTranslation(ID, out Vector2 translation);
+                InternalCalls.TransformComponent_GetTranslation(ID, out Vector2 translation);
                 return translation;
             }
             set
             {
-                InternalCalls.Entity_SetTranslation(ID, ref value);
+                InternalCalls.TransformComponent_SetTranslation(ID, ref value);
+            }
+        }
+
+        public bool HasComponent<T>() where T : Component, new()
+        {
+            Type componentType = typeof(T);
+            return InternalCalls.Entity_HasComponent(ID, componentType);
+        }
+
+        public T GetComponent<T>() where T : Component, new()
+        {
+            if (!HasComponent<T>())
+                return null;
+            T comopnent = new T() { Entity = this };
+            return comopnent;
+        }
+    }
+
+    public abstract class Component
+    {
+        public Entity Entity { get; internal set; }
+    }
+
+    public class TransformComponent : Component
+    {
+        public Vector2 Translation
+        {
+            get
+            {
+                InternalCalls.TransformComponent_GetTranslation(Entity.ID, out Vector2 translation);
+                return translation;
+            }
+            set
+            {
+                InternalCalls.TransformComponent_SetTranslation(Entity.ID, ref value);
             }
         }
     }
@@ -207,15 +236,18 @@ namespace Sandbox
 
     public class Player : RoarEngine.Entity
     {
+        private TransformComponent mTransform;
+
         void OnCreate()
         {
             Console.WriteLine($"Player.OnCreate - {ID}");
+
+            mTransform = GetComponent<TransformComponent>();
+            //mTransform.Translation = new Vector2(0.0f);
         }
 
         void OnUpdate(float ts)
         {
-            Console.WriteLine($"Player.OnUpdate: {ts}");
-
             float speed = 15.0f;
             Vector2 velocity = Vector2.Zero;
 
@@ -231,9 +263,9 @@ namespace Sandbox
 
             velocity *= speed;
 
-            Vector2 translation = Translation;
+            Vector2 translation = mTransform.Translation;
             translation += velocity * ts;
-            Translation = translation;
+            mTransform.Translation = translation;
         }
 
     }

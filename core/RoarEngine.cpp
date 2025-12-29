@@ -7,6 +7,6 @@ int main(int argc, char *argv[]) {
     spec.Name = "RoarEngine";
 
     Roar::Application samples(spec);
-    samples.PushLayer<SceneLayer>();
+    samples.PushLayer<Roar::SceneLayer>();
     samples.Run();
 }

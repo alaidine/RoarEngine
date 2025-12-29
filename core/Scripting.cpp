@@ -2,6 +2,8 @@
 
 namespace Roar {
 
+std::unordered_map<MonoType *, std::function<bool(uint32_t)>> sEntityHasComponentFuncs;
+
 namespace Utils {
 
 static void PrintAssemblyTypes(MonoAssembly *assembly) {
@@ -87,9 +89,10 @@ static ScriptingData *sData = nullptr;
 void Scripting::Init() {
     sData = new ScriptingData;
     InitMono();
-    LoadAssembly("rtmodule.dll");
+    LoadAssembly("RoarScriptCore.dll");
     LoadAssemblyClasses(sData->AppAssembly);
 
+    ScriptGlue::RegisterComponents();
     ScriptGlue::RegisterFunctions();
 
     sData->EntityClass = ScriptClass("RoarEngine", "Entity");
@@ -162,6 +165,8 @@ void Scripting::LoadAssemblyClasses(MonoAssembly *assembly) {
         printf("%s.%s\n", nameSpace, name);
     }
 }
+
+MonoImage *Scripting::GetAssemblyImage() { return sData->AppAssemblyImage; }
 
 void Scripting::Shutdown() {
     ShutdownMono();
@@ -252,18 +257,24 @@ static void NativeLogVector2(glm::vec2 *vec, glm::vec2 *out) {
 
 static float NativeLogVectorDot(glm::vec2 *vec) { return glm::dot(*vec, *vec); }
 
-static void Entity_GetTranslation(uint32_t entity, glm::vec2 *outTranslation) {
+static void TransformComponent_GetTranslation(uint32_t entity, glm::vec2 *outTranslation) {
     Ref<Scene> scene = Scripting::GetSceneContext();
-    Transform2D &transform = sData->SceneContext->GetComponent<Transform2D>(entity);
+    TransformComponent &transform = sData->SceneContext->GetComponent<TransformComponent>(entity);
     *outTranslation = transform.pos;
 }
 
-static void Entity_SetTranslation(uint32_t entity, glm::vec2 *translation) {
+static void TransformComponent_SetTranslation(uint32_t entity, glm::vec2 *translation) {
     Ref<Scene> scene = Scripting::GetSceneContext();
-    sData->SceneContext->GetComponent<Transform2D>(entity).pos = *translation;
+    sData->SceneContext->GetComponent<TransformComponent>(entity).pos = *translation;
 }
 
 static bool Input_IsKeyDown(int keycode) { return IsKeyDown(keycode); }
+
+static bool Entity_HasComponent(uint32_t entity, MonoReflectionType *componentType) {
+    MonoType *managedType = mono_reflection_type_get_type(componentType);
+
+    return sEntityHasComponentFuncs.at(managedType)(entity);
+}
 
 } // namespace InternalCalls
 
@@ -271,9 +282,28 @@ void ScriptGlue::RegisterFunctions() {
     ADD_INTERNAL_CALL(NativeLog);
     ADD_INTERNAL_CALL(NativeLogVector2);
     ADD_INTERNAL_CALL(NativeLogVectorDot);
-    ADD_INTERNAL_CALL(Entity_SetTranslation);
-    ADD_INTERNAL_CALL(Entity_GetTranslation);
+    ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
+    ADD_INTERNAL_CALL(TransformComponent_SetTranslation);
     ADD_INTERNAL_CALL(Input_IsKeyDown);
+    ADD_INTERNAL_CALL(Entity_HasComponent);
+}
+
+template <typename Component> static void RegisterComponent() {
+    std::string_view typeName = typeid(Component).name();
+    size_t pos = typeName.find_last_of(':');
+    std::string_view structName = typeName.substr(pos + 1);
+    std::string managedTypename = fmt::format("RoarEngine.{}", structName);
+    MonoType *managedType = mono_reflection_type_from_name(managedTypename.data(), Scripting::GetAssemblyImage());
+    sEntityHasComponentFuncs[managedType] = [](uint32_t entity) {
+        Ref<Scene> scene = Scripting::GetSceneContext();
+        Signature signature = scene->EntityGetSignature(entity);
+        return signature.test(scene->GetComponentType<Component>());
+    };
+}
+
+void ScriptGlue::RegisterComponents() {
+
+    RegisterComponent<TransformComponent>();
 }
 
 ScriptClass::ScriptClass(const std::string &classNamespace, const std::string &className)

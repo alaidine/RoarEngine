@@ -4,6 +4,8 @@
 #include "ECS.h"
 #include "Scripting.h"
 
+namespace Roar {
+
 class ScriptSystem : public System {
   public:
     ScriptSystem();
@@ -12,3 +14,5 @@ class ScriptSystem : public System {
     void Init();
     void Update(float dt);
 };
+
+} // namespace Roar

@@ -36,7 +36,7 @@ add_subdirectory(renderer)
 add_subdirectory(ecs)
 add_subdirectory(core)
 add_subdirectory(samples)
-add_subdirectory(rtmodule)
+add_subdirectory(RoarScriptCore)
 add_subdirectory(editor)
 
 set_target_properties(samples PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")

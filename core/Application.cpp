@@ -28,8 +28,8 @@ Application::Application(const ApplicationSpecification &specification) : mSpeci
 
 Application::~Application() {
     Scripting::Shutdown();
-    mWindow->Destroy();
     sApplication = nullptr;
+    mWindow->Destroy();
 }
 
 void Application::Run() {

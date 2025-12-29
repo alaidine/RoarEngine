@@ -3,6 +3,7 @@
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/object.h>
+#include <mono/metadata/reflection.h>
 
 #include <filesystem>
 #include <fstream>
@@ -11,8 +12,10 @@
 #include <string>
 #include <unordered_map>
 #include <utility>
+#include <functional>
 
 #include <fmt/format.h>
+#include <spdlog/spdlog.h>
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORM_DEPTH_ZERO_TO_ONE
@@ -32,6 +35,7 @@ namespace Roar {
 class ScriptGlue {
   public:
     static void RegisterFunctions();
+    static void RegisterComponents();
 };
 
 class ScriptClass {
@@ -79,12 +83,14 @@ class Scripting {
     static void SetScene(Ref<Scene> scene);
     static void UnsetScene();
     static Ref<Scene> GetSceneContext();
+    static MonoImage *GetAssemblyImage();
   private:
     static void InitMono();
     static void ShutdownMono();
     static void LoadAssemblyClasses(MonoAssembly *assembly);
 
     friend class ScriptClass;
+    friend class ScriptGlue;
 };
 
 } // namespace Roar

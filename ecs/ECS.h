@@ -288,11 +288,11 @@ class Scene {
 
     void DestroyEntity(Entity entity) {
         mEntityManager->DestroyEntity(entity);
-
         mComponentManager->EntityDestroyed(entity);
-
         mSystemManager->EntityDestroyed(entity);
     }
+
+    Signature EntityGetSignature(Entity entity) { return mEntityManager->GetSignature(entity); }
 
     // Component methods
     template <typename T> void RegisterComponent() { mComponentManager->RegisterComponent<T>(); }

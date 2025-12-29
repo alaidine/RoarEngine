@@ -4,6 +4,8 @@
 #include "ECS.h"
 #include "Renderer.h"
 
+namespace Roar {
+
 class RenderSystem : public System {
   public:
     RenderSystem();
@@ -12,3 +14,5 @@ class RenderSystem : public System {
     void Init();
     void Update(Scene &scene, float dt);
 };
+
+} // namespace Roar

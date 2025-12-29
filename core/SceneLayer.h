@@ -3,7 +3,9 @@
 #include "RenderSystem.h"
 #include "ScriptSystem.h"
 
-class SceneLayer : public Roar::Layer {
+namespace Roar {
+
+class SceneLayer : public Layer {
   public:
     SceneLayer();
     ~SceneLayer();
@@ -17,3 +19,5 @@ class SceneLayer : public Roar::Layer {
     std::shared_ptr<RenderSystem> mRenderSystem;
     std::shared_ptr<ScriptSystem> mScriptSystem;
 };
+
+} // namespace Roar

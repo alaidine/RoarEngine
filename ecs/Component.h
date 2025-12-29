@@ -8,15 +8,19 @@
 
 #include <filesystem>
 
-struct Transform2D {
+namespace Roar {
+
+struct TransformComponent {
     glm::vec2 pos;
     glm::vec2 size;
 };
 
-struct RectangleShape {
+struct RectangleComponent {
     unsigned char color[4];
 };
 
 struct ScriptComponent {
     std::string name;
 };
+
+} // namespace Roar
