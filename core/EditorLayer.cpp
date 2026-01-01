@@ -1,9 +1,15 @@
 #include "EditorLayer.h"
+#include "Application.h"
+#include "SceneLayer.h"
+#include "ProjectManager.h"
+
 #include "imgui.h"
 #include "raylib.h"
 #include "raymath.h"
 #include "rlImGui.h"
 #include "rlImGuiColors.h"
+
+namespace Roar {
 
 bool Quit = false;
 
@@ -112,18 +118,11 @@ class SceneViewWindow : public DocumentWindow {
 
 SceneViewWindow SceneView;
 
-void DoMainMenu() {
+void DrawMenu() {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
             if (ImGui::MenuItem("Exit"))
                 Quit = true;
-
-            ImGui::EndMenu();
-        }
-
-        if (ImGui::BeginMenu("Window")) {
-            ImGui::MenuItem("3D View", nullptr, &SceneView.Open);
-
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
@@ -131,58 +130,44 @@ void DoMainMenu() {
 }
 
 EditorLayer::EditorLayer() {
-    rlImGuiSetup(true);
-    ImGui::GetIO().ConfigWindowsMoveFromTitleBarOnly = true;
-    SceneView.Setup();
-    SceneView.Open = true;
+    SetWindowSize(1280.0f, 720.0f);
+    Open = true;
 
-    ImGuiIO &io = ImGui::GetIO();
-    (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
-
-    // tell ImGui the display scale
-    if (!IsWindowState(FLAG_WINDOW_HIGHDPI)) {
-        io.DisplayFramebufferScale.x = GetWindowScaleDPI().x;
-        io.DisplayFramebufferScale.y = GetWindowScaleDPI().y;
-    }
-
-    static constexpr int DefaultFonSize = 13;
-    ImFontConfig defaultConfig;
-    defaultConfig.SizePixels = DefaultFonSize;
-
-    if (!IsWindowState(FLAG_WINDOW_HIGHDPI)) {
-        defaultConfig.SizePixels = defaultConfig.SizePixels * GetWindowScaleDPI().y;
-        defaultConfig.RasterizerMultiply = GetWindowScaleDPI().y;
-    }
-
-    defaultConfig.PixelSnapH = true;
-    io.Fonts->AddFontDefault(&defaultConfig);
+    SceneManager* sceneManger = Application::Get().GetLayer<SceneManager>();
+    ProjectManagerLayer* projectManager = Application::Get().GetLayer<ProjectManagerLayer>();
+    std::string scenePath = projectManager->scenePath.string();
+    sceneManger->LoadScene(scenePath);
 }
 
-EditorLayer::~EditorLayer() {
-    rlImGuiShutdown();
-    SceneView.Shutdown();
-}
+EditorLayer::~EditorLayer() { }
 
-void EditorLayer::OnEvent(Roar::Event &event) {}
+void EditorLayer::OnEvent(Event &event) {}
 
-void EditorLayer::OnUpdate(float st) { SceneView.Update(); }
+void EditorLayer::OnUpdate(float st) { }
 
 void EditorLayer::OnRender() {
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    ImGuiStyle &style = ImGui::GetStyle();
 
     ClearBackground(Color{uint8_t(clear_color.x * 255), uint8_t(clear_color.y * 255), uint8_t(clear_color.z * 255),
                           uint8_t(clear_color.w * 255)});
-
+    BeginDrawing();
     rlImGuiBegin();
-    DoMainMenu();
-
-    ImGuiStyle &style = ImGui::GetStyle();
+    DrawMenu();
     style.WindowRounding = 10.0f; // Set rounding
-
-    if (SceneView.Open)
-        SceneView.Show();
-
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPIF(400.0f), ScaleToDPIF(400.0f)),
+                                        ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
+    if (ImGui::Begin("Viewport", &Open, ImGuiWindowFlags_NoScrollbar)) {
+        Focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
+        // draw the view
+        auto sm = Application::Get().GetLayer<SceneManager>();
+        rlImGuiImageRenderTextureFit(&sm->ViewTexture, true);
+    }
+    ImGui::End();
+    ImGui::PopStyleVar();
     rlImGuiEnd();
+    EndDrawing();
 }
+
+} // namespace Roar

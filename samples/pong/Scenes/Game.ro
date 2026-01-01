@@ -1,0 +1,26 @@
+entity paddle1 start
+    component transform2D start
+        pos {
+            x = 10
+            y = 10
+        }
+
+        size {
+            x = 20
+            y = 50
+        }
+    end
+
+    component rectangle start
+        color {
+            r = 255
+            g = 0
+            b = 0
+            a = 255
+        }
+    end
+
+    component script start
+        name = Player
+    end
+end

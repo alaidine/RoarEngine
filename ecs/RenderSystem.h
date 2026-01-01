@@ -12,7 +12,7 @@ class RenderSystem : public System {
     ~RenderSystem();
 
     void Init();
-    void Update(Scene &scene, float dt);
+    void Update(Scene &scene);
 };
 
 } // namespace Roar

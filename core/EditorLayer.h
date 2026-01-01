@@ -1,11 +1,18 @@
 #include "Layer.h"
 
-class EditorLayer : public Roar::Layer {
+namespace Roar {
+
+class EditorLayer : public Layer {
   public:
     EditorLayer();
     ~EditorLayer();
 
-    void OnEvent(Roar::Event &event) override;
+    void OnEvent(Event &event) override;
     void OnUpdate(float st) override;
     void OnRender() override;
+
+    bool Open = false;
+    bool Focused = false;
 };
+
+} // namespace Roar

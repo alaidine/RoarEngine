@@ -19,6 +19,7 @@ namespace Roar {
 struct ApplicationSpecification {
     std::string Name = "Application";
     std::string Title = "app";
+    bool headless = false;
     WindowSpecification WindowSpec;
 };
 
@@ -55,11 +56,14 @@ class Application {
 
     static Application &Get();
 
+    void QueueTransition(std::unique_ptr<Layer> layer, Layer *from);
+
   private:
     ApplicationSpecification mSpecification;
     std::shared_ptr<Window> mWindow;
     bool m_Running = false;
     std::vector<std::unique_ptr<Layer>> m_LayerStack;
+    std::vector<std::pair<Layer *, std::unique_ptr<Layer>>> m_QueuedTransitions;
     friend class Layer;
 };
 

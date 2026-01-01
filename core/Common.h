@@ -3,6 +3,7 @@
 #include <memory>
 #include <utility>
 #include <spdlog/spdlog.h>
+#include <fmt/format.h>
 
 template <typename T> using Ref = std::shared_ptr<T>;
 template <typename T, typename... Args> constexpr Ref<T> CreateRef(Args &&...args) {
@@ -12,3 +13,4 @@ template <typename T, typename... Args> constexpr Ref<T> CreateRef(Args &&...arg
 #define RO_LOG_INFO(...) spdlog::info(__VA_ARGS__)
 #define RO_LOG_WARN(...) spdlog::warn(__VA_ARGS__)
 #define RO_LOG_ERR(...) spdlog::error(__VA_ARGS__)
+#define RL_ASSERT(_EXPR) assert(_EXPR)

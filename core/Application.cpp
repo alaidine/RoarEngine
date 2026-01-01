@@ -1,9 +1,15 @@
 #include "Application.h"
+#include "Common.h"
 #include "Scripting.h"
+
+#include "imgui.h"
+#include "raylib.h"
+#include "rlImGui.h"
 
 #include <glm/glm.hpp>
 
 #include <assert.h>
+#include <fmt/format.h>
 #include <iostream>
 #include <ranges>
 
@@ -13,6 +19,25 @@ static Application *sApplication = nullptr;
 
 static void GLFWErrorCallback(int error, const char *description) { std::cerr << "[GLFW Error]: " << description << std::endl; }
 
+void CustomTraceLog(int msgType, const char *text, va_list args) {
+    switch (msgType) {
+    case LOG_INFO:
+        spdlog::info(fmt::vformat(fmt::string_view(text), fmt::make_format_args(args)));
+        break;
+    case LOG_ERROR:
+        spdlog::error(fmt::vformat(fmt::string_view(text), fmt::make_format_args(args)));
+        break;
+    case LOG_WARNING:
+        spdlog::warn(fmt::vformat(fmt::string_view(text), fmt::make_format_args(args)));
+        break;
+    case LOG_DEBUG:
+        spdlog::debug(fmt::vformat(fmt::string_view(text), fmt::make_format_args(args)));
+        break;
+    default:
+        break;
+    }
+}
+
 Application::Application(const ApplicationSpecification &specification) : mSpecification(specification) {
     sApplication = this;
     if (mSpecification.WindowSpec.Title.empty())
@@ -20,16 +45,41 @@ Application::Application(const ApplicationSpecification &specification) : mSpeci
     if (mSpecification.WindowSpec.Name.empty())
         mSpecification.WindowSpec.Name = mSpecification.Name;
     mSpecification.WindowSpec.EventCallback = [this](Event &event) { RaiseEvent(event); };
+
+    SetTraceLogCallback(CustomTraceLog);
+
     mWindow = std::make_shared<Window>(mSpecification.WindowSpec);
     mWindow->Create();
+
+    rlImGuiSetup(true); // tell ImGui the display scale
+
+    ImGuiIO &io = ImGui::GetIO();
+
+    // tell ImGui the display scale
+    if (!IsWindowState(FLAG_WINDOW_HIGHDPI)) {
+        io.DisplayFramebufferScale.x = GetWindowScaleDPI().x;
+        io.DisplayFramebufferScale.y = GetWindowScaleDPI().y;
+    }
+
+    static constexpr int DefaultFonSize = 13;
+    ImFontConfig defaultConfig;
+    defaultConfig.SizePixels = DefaultFonSize;
+
+    if (!IsWindowState(FLAG_WINDOW_HIGHDPI)) {
+        defaultConfig.SizePixels = defaultConfig.SizePixels * GetWindowScaleDPI().y;
+        defaultConfig.RasterizerMultiply = GetWindowScaleDPI().y;
+    }
+
+    defaultConfig.PixelSnapH = true;
+    io.Fonts->AddFontDefault(&defaultConfig);
 
     Scripting::Init();
 }
 
 Application::~Application() {
     Scripting::Shutdown();
+    rlImGuiShutdown();
     sApplication = nullptr;
-    mWindow->Destroy();
 }
 
 void Application::Run() {
@@ -50,9 +100,6 @@ void Application::Run() {
         float timestep = glm::clamp(currentTime - lastTime, 0.001f, 0.1f);
         lastTime = currentTime;
 
-        // Start frame drawing
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
         // Main layer update here
         for (const std::unique_ptr<Layer> &layer : m_LayerStack)
             layer->OnUpdate(timestep);
@@ -60,8 +107,28 @@ void Application::Run() {
         // NOTE: rendering can be done elsewhere (eg. render thread)
         for (const std::unique_ptr<Layer> &layer : m_LayerStack)
             layer->OnRender();
-        EndDrawing();
+
+        // Apply any queued transitions after all layers have finished their
+        // OnUpdate/OnRender for this frame. This avoids destroying a layer
+        // while one of its member functions is still executing.
+        if (!m_QueuedTransitions.empty()) {
+            for (auto &entry : m_QueuedTransitions) {
+                Layer *from = entry.first;
+                std::unique_ptr<Layer> &newLayer = entry.second;
+                for (auto &slot : m_LayerStack) {
+                    if (slot.get() == from) {
+                        slot = std::move(newLayer);
+                        break;
+                    }
+                }
+            }
+            m_QueuedTransitions.clear();
+        }
     }
+}
+
+void Application::QueueTransition(std::unique_ptr<Layer> layer, Layer *from) {
+    m_QueuedTransitions.emplace_back(from, std::move(layer));
 }
 
 void Application::Stop() { m_Running = false; }

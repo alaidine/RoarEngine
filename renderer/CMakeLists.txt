@@ -5,6 +5,8 @@ add_library(renderer
     rlImGui.cpp
     rlImGui.h
     rlImGuiColors.h
+    raygui.h
+    style_dark.h
     Renderer.h
     Renderer.cpp)
 

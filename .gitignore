@@ -5,7 +5,6 @@ RoarEngine.exe
 .vs/
 .vscode/
 out/
-pong/
 
 mono/
 mono_win64.zip

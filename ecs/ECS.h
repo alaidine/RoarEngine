@@ -37,6 +37,20 @@ class EntityManager {
         return id;
     }
 
+    Entity CreateEntity(std::string name) {
+        assert(mLivingEntityCount < MAX_ENTITIES && "Too many entities in existence.");
+
+        // Take an ID from the front of the queue
+        Entity id = mAvailableEntities.front();
+        mAvailableEntities.pop();
+        ++mLivingEntityCount;
+
+        mEntityToNameMap[id] = name;
+        mNameToEntityMap[name] = id;
+
+        return id;
+    }
+
     void DestroyEntity(Entity entity) {
         assert(entity < MAX_ENTITIES && "Entity out of range.");
         // Invalidate the destroyed entity's signature
@@ -65,6 +79,10 @@ class EntityManager {
     std::array<Signature, MAX_ENTITIES> mSignatures{};
     // Total living entities - used to keep limits on how many exist
     uint32_t mLivingEntityCount{};
+    // Map from an entity ID to name.
+    std::unordered_map<Entity, std::string> mEntityToNameMap;
+    // Map from an name to an entity ID index.
+    std::unordered_map<std::string, Entity> mNameToEntityMap;
 };
 
 // The one instance of virtual inheritance in the entire implementation.
@@ -285,6 +303,8 @@ class Scene {
 
     // Entity methods
     Entity CreateEntity() { return mEntityManager->CreateEntity(); }
+    
+    Entity CreateEntity(std::string name) { return mEntityManager->CreateEntity(name); }
 
     void DestroyEntity(Entity entity) {
         mEntityManager->DestroyEntity(entity);

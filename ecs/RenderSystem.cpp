@@ -9,7 +9,7 @@ RenderSystem::~RenderSystem() {}
 
 void RenderSystem::Init() {}
 
-void RenderSystem::Update(Scene &scene, float dt) {
+void RenderSystem::Update(Scene &scene) {
     for (auto const &entity : mEntities) {
         auto &rectangle = scene.GetComponent<RectangleComponent>(entity);
         auto &transform = scene.GetComponent<TransformComponent>(entity);

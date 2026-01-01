@@ -8,21 +8,16 @@
 
 namespace Roar {
 
-Window::Window(const WindowSpecification &specification) : mSpecification(specification) {  }
+Window::Window(const WindowSpecification &specification) : mSpecification(specification) {}
 
 Window::~Window() { Destroy(); }
 
-void Window::PollEvent() {
-    int kp = GetKeyPressed();
-    KeyPressedEvent keyPressedEvent(kp, false);
-
-    if (kp != 0) {
-        RaiseEvent(keyPressedEvent);
-    }
-}
+void Window::PollEvent() {}
 
 void Window::Create() {
+    SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
     InitWindow(mSpecification.Width, mSpecification.Height, mSpecification.Name.c_str());
+    SetTargetFPS(60);
 }
 
 std::string Window::getWindowTitle() const {
@@ -33,11 +28,9 @@ std::string Window::getWindowTitle() const {
     return windowTitle;
 }
 
-void Window::Destroy() {
-    CloseWindow();
-}
+void Window::Destroy() { CloseWindow(); }
 
-void Window::Update() { }
+void Window::Update() {}
 
 void Window::RaiseEvent(Event &event) {
     if (mSpecification.EventCallback)
@@ -55,8 +48,6 @@ glm::vec2 Window::GetMousePos() const {
     return {static_cast<float>(x), static_cast<float>(y)};
 }
 
-bool Window::ShouldClose() const {
-    return WindowShouldClose();
-}
+bool Window::ShouldClose() const { return WindowShouldClose(); }
 
 } // namespace Roar

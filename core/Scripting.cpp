@@ -1,5 +1,7 @@
 #include "Scripting.h"
 
+#include <filesystem>
+
 namespace Roar {
 
 std::unordered_map<MonoType *, std::function<bool(uint32_t)>> sEntityHasComponentFuncs;
@@ -76,8 +78,13 @@ static MonoAssembly *LoadCSharpAssembly(const std::filesystem::path &assemblyPat
 struct ScriptingData {
     MonoDomain *RootDomain = nullptr;
     MonoDomain *AppDomain = nullptr;
+
+    MonoAssembly *CoreAssembly = nullptr;
+    MonoImage *CoreAssemblyImage = nullptr;
+
     MonoAssembly *AppAssembly = nullptr;
     MonoImage *AppAssemblyImage = nullptr;
+
     ScriptClass EntityClass;
     std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
     std::unordered_map<uint32_t, Ref<ScriptInstance>> EntityInstances;
@@ -90,12 +97,13 @@ void Scripting::Init() {
     sData = new ScriptingData;
     InitMono();
     LoadAssembly("RoarScriptCore.dll");
-    LoadAssemblyClasses(sData->AppAssembly);
+    LoadAppAssembly("RoarSandbox.dll");
+    LoadAssemblyClasses();
 
     ScriptGlue::RegisterComponents();
     ScriptGlue::RegisterFunctions();
 
-    sData->EntityClass = ScriptClass("RoarEngine", "Entity");
+    sData->EntityClass = ScriptClass("RoarEngine", "Entity", true);
 #if 0
 
     // 2. Call function
@@ -129,19 +137,19 @@ void Scripting::Init() {
 #endif
 }
 
-void Scripting::LoadAssemblyClasses(MonoAssembly *assembly) {
+void Scripting::LoadAssemblyClasses() {
     sData->EntityClasses.clear();
 
-    MonoImage *image = mono_assembly_get_image(assembly);
-    const MonoTableInfo *typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+    const MonoTableInfo *typeDefinitionsTable = mono_image_get_table_info(sData->AppAssemblyImage, MONO_TABLE_TYPEDEF);
     int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
+    MonoClass *entityClass = mono_class_from_name(sData->CoreAssemblyImage, "RoarEngine", "Entity");
 
     for (int32_t i = 0; i < numTypes; i++) {
         uint32_t cols[MONO_TYPEDEF_SIZE];
         mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
 
-        const char *nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
-        const char *name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+        const char *nameSpace = mono_metadata_string_heap(sData->AppAssemblyImage, cols[MONO_TYPEDEF_NAMESPACE]);
+        const char *name = mono_metadata_string_heap(sData->AppAssemblyImage, cols[MONO_TYPEDEF_NAME]);
         std::string fullName;
 
         if (strlen(nameSpace) != 0) {
@@ -150,8 +158,7 @@ void Scripting::LoadAssemblyClasses(MonoAssembly *assembly) {
             fullName = name;
         }
 
-        MonoClass *monoClass = mono_class_from_name(image, nameSpace, name);
-        MonoClass *entityClass = mono_class_from_name(image, "RoarEngine", "Entity");
+        MonoClass *monoClass = mono_class_from_name(sData->AppAssemblyImage, nameSpace, name);
 
         if (monoClass == entityClass) {
             continue;
@@ -166,7 +173,7 @@ void Scripting::LoadAssemblyClasses(MonoAssembly *assembly) {
     }
 }
 
-MonoImage *Scripting::GetAssemblyImage() { return sData->AppAssemblyImage; }
+MonoImage *Scripting::GetAssemblyImage() { return sData->CoreAssemblyImage; }
 
 void Scripting::Shutdown() {
     ShutdownMono();
@@ -178,10 +185,15 @@ void Scripting::LoadAssembly(const std::filesystem::path &filepath) {
     sData->AppDomain = mono_domain_create_appdomain((char *)"MyAppDomain", nullptr);
     mono_domain_set(sData->AppDomain, true);
 
+    sData->CoreAssembly = Utils::LoadCSharpAssembly(filepath.c_str());
+    sData->CoreAssemblyImage = mono_assembly_get_image(sData->CoreAssembly);
+
+    Utils::PrintAssemblyTypes(sData->CoreAssembly);
+}
+
+void Scripting::LoadAppAssembly(const std::filesystem::path &filepath) {
     sData->AppAssembly = Utils::LoadCSharpAssembly(filepath.c_str());
     sData->AppAssemblyImage = mono_assembly_get_image(sData->AppAssembly);
-
-    Utils::PrintAssemblyTypes(sData->AppAssembly);
 }
 
 MonoObject *Scripting::InstantiateKlass(MonoClass *klass) {
@@ -301,14 +313,12 @@ template <typename Component> static void RegisterComponent() {
     };
 }
 
-void ScriptGlue::RegisterComponents() {
+void ScriptGlue::RegisterComponents() { RegisterComponent<TransformComponent>(); }
 
-    RegisterComponent<TransformComponent>();
-}
-
-ScriptClass::ScriptClass(const std::string &classNamespace, const std::string &className)
+ScriptClass::ScriptClass(const std::string &classNamespace, const std::string &className, bool isCore)
     : mClassNamespace(classNamespace), mClassName(className) {
-    mMonoClass = mono_class_from_name(sData->AppAssemblyImage, mClassNamespace.c_str(), mClassName.c_str());
+    mMonoClass = mono_class_from_name(isCore ? sData->CoreAssemblyImage : sData->AppAssemblyImage, mClassNamespace.c_str(),
+                                      mClassName.c_str());
 }
 
 MonoObject *ScriptClass::Instantiate() { return Scripting::InstantiateKlass(mMonoClass); }
