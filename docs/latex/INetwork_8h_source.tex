@@ -1,0 +1,100 @@
+\doxysection{INetwork.\+h}
+\hypertarget{INetwork_8h_source}{}\label{INetwork_8h_source}\index{include/INetwork.h@{include/INetwork.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}IPlugin.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}framework.h"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#if\ defined(\_WIN32)}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <winsock2.h>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <ws2tcpip.h>}}
+\DoxyCodeLine{00009\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{int}\ socklen\_t;}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ CLOSE\_SOCKET(s)\ closesocket(s)}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ SOCKET\_TYPE\ SOCKET}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ INVALID\_SOCK\ INVALID\_SOCKET}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <arpa/inet.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <errno.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <fcntl.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <netinet/in.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <sys/socket.h>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ <unistd.h>}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ CLOSE\_SOCKET(s)\ close(s)}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ SOCKET\_TYPE\ int}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ INVALID\_SOCK\ (-\/1)}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <cstdio>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <cstring>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{namespace\ }Roar\ \{}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ \{}
+\DoxyCodeLine{00033\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classRoar_1_1INetBuffer}{\string~INetBuffer}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ WriteUInt8(uint8\_t\ value)\ =\ 0;}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ WriteUInt16(uint16\_t\ value)\ =\ 0;}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ WriteUInt32(uint32\_t\ value)\ =\ 0;}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ WriteInt32(int32\_t\ value)\ =\ 0;}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ WriteFloat(\textcolor{keywordtype}{float}\ value)\ =\ 0;}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ WriteBytes(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ length)\ =\ 0;}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{virtual}\ uint8\_t\ ReadUInt8()\ =\ 0;}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{virtual}\ uint16\_t\ ReadUInt16()\ =\ 0;}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keyword}{virtual}\ uint32\_t\ ReadUInt32()\ =\ 0;}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{virtual}\ int32\_t\ ReadInt32()\ =\ 0;}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{float}\ ReadFloat()\ =\ 0;}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ ReadBytes(\textcolor{keywordtype}{void}\ *dest,\ \textcolor{keywordtype}{size\_t}\ length)\ =\ 0;}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ Clear()\ =\ 0;}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ ResetRead()\ =\ 0;}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{virtual}\ uint8\_t\ *GetData()\ =\ 0;}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keyword}{const}\ uint8\_t\ *GetData()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{size\_t}\ GetSize()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{size\_t}\ GetReadPos()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ CanRead(\textcolor{keywordtype}{size\_t}\ bytes)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ LoadData(\textcolor{keyword}{const}\ uint8\_t\ *data,\ \textcolor{keywordtype}{size\_t}\ size)\ =\ 0;}
+\DoxyCodeLine{00055\ \};}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classRoar_1_1INetSocket}{INetSocket}}\ \{}
+\DoxyCodeLine{00058\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classRoar_1_1INetSocket}{\string~INetSocket}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ Bind(uint16\_t\ port)\ =\ 0;}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ SendTo(\textcolor{keyword}{const}\ \mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ \&buffer,\ \textcolor{keyword}{const}\ sockaddr\_in\ \&dest)\ =\ 0;}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ SendTo(\textcolor{keyword}{const}\ \mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ \&buffer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ip,\ uint16\_t\ port)\ =\ 0;}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ ReceiveFrom(\mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ \&buffer,\ sockaddr\_in\ \&from)\ =\ 0;}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{virtual}\ SOCKET\_TYPE\ GetFd()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ IsBound()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00066\ \};}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classRoar_1_1INetServer}{INetServer}}\ \{}
+\DoxyCodeLine{00069\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classRoar_1_1INetServer}{\string~INetServer}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ Start()\ =\ 0;}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ Receive(\mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ \&buffer,\ sockaddr\_in\ \&from)\ =\ 0;}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ SendTo(\textcolor{keyword}{const}\ \mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ \&buffer,\ \textcolor{keyword}{const}\ sockaddr\_in\ \&dest)\ =\ 0;}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keyword}{virtual}\ SOCKET\_TYPE\ GetFd()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00075\ \};}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classRoar_1_1INetClient}{INetClient}}\ \{}
+\DoxyCodeLine{00078\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classRoar_1_1INetClient}{\string~INetClient}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ Connect(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ip,\ uint16\_t\ port)\ =\ 0;}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ Send(\textcolor{keyword}{const}\ \mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ \&buffer)\ =\ 0;}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ Receive(\mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ \&buffer)\ =\ 0;}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keyword}{virtual}\ SOCKET\_TYPE\ GetFd()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ IsConnected()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00085\ \};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classRoar_1_1INetwork}{INetwork}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classRoar_1_1IPlugin}{IPlugin}}\ \{}
+\DoxyCodeLine{00088\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classRoar_1_1INetClient}{INetClient}}\ *NewClient()\ =\ 0;}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classRoar_1_1INetServer}{INetServer}}\ *NewServer(uint16\_t\ port)\ =\ 0;}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ *NewBuffer()\ =\ 0;}
+\DoxyCodeLine{00092\ \};}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \}\ \textcolor{comment}{//\ namespace\ Roar}}
+
+\end{DoxyCode}

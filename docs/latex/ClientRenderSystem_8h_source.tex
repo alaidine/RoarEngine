@@ -1,0 +1,47 @@
+\doxysection{Client\+Render\+System.\+h}
+\hypertarget{ClientRenderSystem_8h_source}{}\label{ClientRenderSystem_8h_source}\index{include/ClientRenderSystem.h@{include/ClientRenderSystem.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}Scene.h"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}System.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <raylib.h>}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classClientRendererSystem}{ClientRendererSystem}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classSystem}{System}}\ \{}
+\DoxyCodeLine{00007\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00008\ \ \ \ \ Texture2D*\ m\_playerTexture;}
+\DoxyCodeLine{00009\ \ \ \ \ Rectangle\ sourcerec;}
+\DoxyCodeLine{00010\ \ \ \ \ Rectangle\ destrec;}
+\DoxyCodeLine{00011\ \ \ \ \ Rectangle\ rec;}
+\DoxyCodeLine{00012\ \ \ \ \ Vector2\ origin\ =\ \{\ 0.0f,\ 0.0f\ \};}
+\DoxyCodeLine{00013\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keywordtype}{void}\ SetPlayerTexture(Texture2D*\ texture)\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ m\_playerTexture\ =\ texture;}
+\DoxyCodeLine{00016\ \ \ \ \ \}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{void}\ RenderClient(\mbox{\hyperlink{classScene}{Scene}}\&\ core,\ Entity\ entity)\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\&\ pos\ =\ core.GetComponent<\mbox{\hyperlink{structPosition}{Position}}>(entity);}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\&\ anim\ =\ core.GetComponent<\mbox{\hyperlink{structAnimationComponent}{AnimationComponent}}>(entity);}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\&\ sprite\ =\ core.GetComponent<\mbox{\hyperlink{structSprite}{Sprite}}>(entity);}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\&\ netClient\ =\ core.GetComponent<\mbox{\hyperlink{structNetworkedClient}{NetworkedClient}}>(entity);}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ frameWidth\ =\ 32;}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ frameHeight\ =\ 22.0f;}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ sourcerec\ =\ \{\ 0.0f,\ 30.0f,\ frameWidth,\ frameHeight\ \};}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ rec\ =\ \{\ pos.position.x,\ pos.position.y,\ frameWidth\ *\ 2.0f,\ frameHeight\ *\ 2.0f\ \};}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ destrec\ =\ \{\ pos.position.x,\ pos.position.y,\ frameWidth\ *\ 2.0f,\ frameHeight\ *\ 2.0f\ \};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ DrawTexturePro(*m\_playerTexture,\ sourcerec,\ destrec,\ origin,\ 0.0f,\ sprite.color);}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Draw\ rectangle\ around\ local\ player}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (netClient.is\_local)\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ DrawRectangleLinesEx(rec,\ 3,\ DARKBROWN);}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00036\ \ \ \ \ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{void}\ Update()\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ This\ system\ requires\ manual\ update\ with\ Core\ reference}}
+\DoxyCodeLine{00040\ \ \ \ \ \}}
+\DoxyCodeLine{00041\ \};}
+
+\end{DoxyCode}

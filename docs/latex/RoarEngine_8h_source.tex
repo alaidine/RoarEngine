@@ -1,0 +1,52 @@
+\doxysection{Roar\+Engine.\+h}
+\hypertarget{RoarEngine_8h_source}{}\label{RoarEngine_8h_source}\index{include/RoarEngine.h@{include/RoarEngine.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}framework.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}raylib.h"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Networking.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}PluginManager.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}spdlog/spdlog.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#if\ defined(\_WIN32)}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ RO\_DEBGBRK()\ \_\_debugbreak()}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ RO\_LOG\_INFO(...)\ spdlog::info(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ RO\_LOG\_WARN(...)\ spdlog::warn(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ RO\_LOG\_ERR(...)\ spdlog::error(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ RO\_LOG\_DEBUG(...)\ spdlog::debug(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ RO\_ASSERT(\_EXPR)\ assert(\_EXPR)}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#if\ defined(\_WIN32)}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#if\ defined(ENGINE\_EXPORTS)}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ ENGINE\_API\ \_\_declspec(dllexport)}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ ENGINE\_API\ \_\_declspec(dllimport)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ ENGINE\_API\ \_\_attribute\_\_((visibility("{}default"{})))}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{namespace\ }Roar\ \{}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structRoar_1_1AppData}{AppData}}\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00035\ \ \ \ \ uint32\_t\ width\ =\ 1280;}
+\DoxyCodeLine{00036\ \ \ \ \ uint32\_t\ height\ =\ 720;}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{bool}\ headless\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00038\ \ \ \ \ void\ (*init)();}
+\DoxyCodeLine{00039\ \ \ \ \ void\ (*frame)();}
+\DoxyCodeLine{00040\ \ \ \ \ void\ (*cleanup)();}
+\DoxyCodeLine{00041\ \}\ \mbox{\hyperlink{structRoar_1_1AppData}{AppData}};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{void}\ AppRun(\mbox{\hyperlink{structRoar_1_1AppData}{AppData}}\ appdata);}
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{void}\ StopApp();}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \}\ \textcolor{comment}{//\ namespace\ Roar}}
+
+\end{DoxyCode}

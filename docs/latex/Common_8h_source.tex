@@ -1,0 +1,29 @@
+\doxysection{Common.\+h}
+\hypertarget{Common_8h_source}{}\label{Common_8h_source}\index{include/Common.h@{include/Common.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}framework.h"{}}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <spdlog/spdlog.h>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <stdexcept>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <utility>}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keyword}{using\ }Ref\ =\ std::shared\_ptr<T>;}
+\DoxyCodeLine{00011\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keyword}{typename}...\ Args>\ \textcolor{keyword}{constexpr}\ Ref<T>\ CreateRef(Args\ \&\&...args)\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keywordflow}{return}\ std::make\_shared<T>(std::forward<Args>(args)...);}
+\DoxyCodeLine{00013\ \}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#ifdef\ \_WIN32}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ RO\_DEBGBRK()\ \_\_debugbreak()}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ RO\_LOG\_INFO(...)\ spdlog::info(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ RO\_LOG\_WARN(...)\ spdlog::warn(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ RO\_LOG\_ERR(...)\ spdlog::error(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ RO\_LOG\_DEBUG(...)\ spdlog::debug(\_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ RO\_ASSERT(\_EXPR)\ assert(\_EXPR)}}
+
+\end{DoxyCode}

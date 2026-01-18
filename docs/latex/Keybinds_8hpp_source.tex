@@ -1,0 +1,148 @@
+\doxysection{Keybinds.\+hpp}
+\hypertarget{Keybinds_8hpp_source}{}\label{Keybinds_8hpp_source}\index{include/Keybinds.hpp@{include/Keybinds.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ KEYBINDS}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ KEYBINDS}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <functional>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}raylib.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{class\ }KeyBinding\ \{}
+\DoxyCodeLine{00011\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keywordtype}{int}\ defaultKeys;}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keywordtype}{int}\ currentKeys;}
+\DoxyCodeLine{00014\ \ \ \ \ std::function<void()>\ action;}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00017\ \ \ \ \ KeyBinding(\textcolor{keywordtype}{int}\ defkeys,\ std::function<\textcolor{keywordtype}{void}()>func):defaultKeys(defkeys),\ currentKeys(defkeys),\ action(func)\{\};}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ setKey(\textcolor{keywordtype}{int}\ newKey)\{\ currentKeys\ =\ newKey;\};}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ getKey()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ currentKeys;\};}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ getDefaultKey()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ defaultKeys;\};}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ std::function<void()>\&\ getAction()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ action;\};}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{void}\ execute()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (action)\ action();}
+\DoxyCodeLine{00024\ \ \ \ \ \}}
+\DoxyCodeLine{00025\ \};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classInputManager}{InputManager}}\ \{}
+\DoxyCodeLine{00028\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00029\ \ \ \ \ std::map<std::string,\ KeyBinding>\ bindings;}
+\DoxyCodeLine{00030\ \ \ \ \ std::string\ waitingForRebind;}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{bool}\ isRebinding\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{void}\ add(\textcolor{keyword}{const}\ std::string\&\ name,\ \textcolor{keywordtype}{int}\ key,\ std::function<\textcolor{keywordtype}{void}()>\ action)\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ bindings.emplace(name,\ \mbox{\hyperlink{classKeyBinding}{KeyBinding}}(key,\ action));}
+\DoxyCodeLine{00036\ \ \ \ \ \}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{void}\ startRebind(\textcolor{keyword}{const}\ std::string\&\ name)\ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ waitingForRebind\ =\ name;}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ isRebinding\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00040\ \ \ \ \ \}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{bool}\ rebinding()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ isRebinding;\ \}}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{void}\ handleKey(\textcolor{keywordtype}{int}\ key)\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (key\ ==\ 0)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isRebinding)\ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ bindings.at(waitingForRebind).setKey(key);}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ isRebinding\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Rebound\ "{}}\ <<\ waitingForRebind\ <<\ \textcolor{stringliteral}{"{}\ to\ "{}}\ <<\ key\ <<\ std::endl;}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ [\_,\ binding]\ :\ bindings)\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (binding.getKey()\ ==\ key)}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ binding.execute();}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00054\ \ \ \ \ \}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{const}\ std::map<std::string,\ KeyBinding>\&\ getBindings()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ bindings;}
+\DoxyCodeLine{00058\ \ \ \ \ \}}
+\DoxyCodeLine{00059\ \};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ GetKeyName(\textcolor{keywordtype}{int}\ key)}
+\DoxyCodeLine{00062\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordflow}{switch}\ (key)}
+\DoxyCodeLine{00064\ \ \ \ \ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Lettres}}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_A:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}A"{}};}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_B:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}B"{}};}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_C:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}C"{}};}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_D:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}D"{}};}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_E:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}E"{}};}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_F:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}F"{}};}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_G:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}G"{}};}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_H:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}H"{}};}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_I:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}I"{}};}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_J:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}J"{}};}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_K:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}K"{}};}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_L:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}L"{}};}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_M:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}M"{}};}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_N:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}N"{}};}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_O:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}O"{}};}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_P:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}P"{}};}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_Q:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}Q"{}};}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_R:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}R"{}};}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_S:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}S"{}};}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_T:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}T"{}};}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_U:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}U"{}};}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_V:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}V"{}};}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_W:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}W"{}};}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_X:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}X"{}};}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_Y:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}Y"{}};}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_Z:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}Z"{}};}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Chiffres}}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_ZERO:\ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}0"{}};}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_ONE:\ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}1"{}};}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_TWO:\ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}2"{}};}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_THREE:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}3"{}};}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_FOUR:\ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}4"{}};}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_FIVE:\ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}5"{}};}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_SIX:\ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}6"{}};}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_SEVEN:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}7"{}};}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_EIGHT:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}8"{}};}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_NINE:\ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}9"{}};}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Touches\ spéciales}}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_SPACE:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}SPACE"{}};}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_ESCAPE:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}ESC"{}};}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_ENTER:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}ENTER"{}};}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_TAB:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}TAB"{}};}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_BACKSPACE:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}BACKSPACE"{}};}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_LEFT:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}LEFT"{}};}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_RIGHT:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}RIGHT"{}};}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_UP:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}UP"{}};}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_DOWN:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}DOWN"{}};}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_LEFT\_SHIFT:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}LSHIFT"{}};}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_RIGHT\_SHIFT:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}RSHIFT"{}};}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_LEFT\_CONTROL:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}LCTRL"{}};}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_RIGHT\_CONTROL:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}RCTRL"{}};}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_LEFT\_ALT:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}LALT"{}};}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_RIGHT\_ALT:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}RALT"{}};}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Fonction}}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_F1:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}F1"{}};}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_F2:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}F2"{}};}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_F3:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}F3"{}};}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_F4:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}F4"{}};}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_F5:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}F5"{}};}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_F6:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}F6"{}};}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_F7:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}F7"{}};}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_F8:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}F8"{}};}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_F9:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}F9"{}};}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_F10:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}F10"{}};}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_F11:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}F11"{}};}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ KEY\_F12:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}F12"{}};}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}UNKNOWN"{}};}
+\DoxyCodeLine{00138\ \ \ \ \ \}}
+\DoxyCodeLine{00139\ \}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \textcolor{preprocessor}{\#endif\ }}
+
+\end{DoxyCode}

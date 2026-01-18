@@ -1,0 +1,28 @@
+\doxysection{Roar\+::INet\+Server Class Reference}
+\hypertarget{classRoar_1_1INetServer}{}\label{classRoar_1_1INetServer}\index{Roar::INetServer@{Roar::INetServer}}
+Inheritance diagram for Roar\+::INet\+Server\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classRoar_1_1INetServer}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classRoar_1_1INetServer_a50fbb49aa832c5dcc883af1f3098a839}\label{classRoar_1_1INetServer_a50fbb49aa832c5dcc883af1f3098a839} 
+virtual bool {\bfseries Start} ()=0
+\item 
+\Hypertarget{classRoar_1_1INetServer_a05ad816e95a789089d8d36697c3b3bd5}\label{classRoar_1_1INetServer_a05ad816e95a789089d8d36697c3b3bd5} 
+virtual int {\bfseries Receive} (\mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&buffer, sockaddr\+\_\+in \&from)=0
+\item 
+\Hypertarget{classRoar_1_1INetServer_a6ed9b50069e5eff409689917679bb2fd}\label{classRoar_1_1INetServer_a6ed9b50069e5eff409689917679bb2fd} 
+virtual bool {\bfseries Send\+To} (const \mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&buffer, const sockaddr\+\_\+in \&dest)=0
+\item 
+\Hypertarget{classRoar_1_1INetServer_ad59d35ee9c56bc35cefba971dc50ded1}\label{classRoar_1_1INetServer_ad59d35ee9c56bc35cefba971dc50ded1} 
+virtual SOCKET\+\_\+\+TYPE {\bfseries Get\+Fd} () const =0
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/INetwork.\+h\end{DoxyCompactItemize}

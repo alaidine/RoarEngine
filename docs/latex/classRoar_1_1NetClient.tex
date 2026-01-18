@@ -1,0 +1,81 @@
+\doxysection{Roar\+::Net\+Client Class Reference}
+\hypertarget{classRoar_1_1NetClient}{}\label{classRoar_1_1NetClient}\index{Roar::NetClient@{Roar::NetClient}}
+Inheritance diagram for Roar\+::Net\+Client\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classRoar_1_1NetClient}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classRoar_1_1NetClient_a870746882a0c0d590772a872f32898ee}{Connect}} (const char \texorpdfstring{$\ast$}{*}ip, uint16\+\_\+t port) override
+\item 
+bool \mbox{\hyperlink{classRoar_1_1NetClient_aea6c737c71915f091a714f0b8b6abc13}{Send}} (const \mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&buffer) override
+\item 
+int \mbox{\hyperlink{classRoar_1_1NetClient_a65d71e6b783a056230a127c1525d3fe5}{Receive}} (\mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&buffer) override
+\item 
+SOCKET\+\_\+\+TYPE \mbox{\hyperlink{classRoar_1_1NetClient_aaa3655000983df48dcc9c6ddc82c04eb}{Get\+Fd}} () const override
+\item 
+bool \mbox{\hyperlink{classRoar_1_1NetClient_a8809c17ad0b4106a3248d6ed59c31091}{Is\+Connected}} () const override
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{classRoar_1_1NetClient_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classRoar_1_1NetClient_a870746882a0c0d590772a872f32898ee}\index{Roar::NetClient@{Roar::NetClient}!Connect@{Connect}}
+\index{Connect@{Connect}!Roar::NetClient@{Roar::NetClient}}
+\doxysubsubsection{\texorpdfstring{Connect()}{Connect()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetClient_a870746882a0c0d590772a872f32898ee} 
+bool Roar\+::\+Net\+Client\+::\+Connect (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{ip}{, }\item[{uint16\+\_\+t}]{port}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetClient}{Roar\+::\+INet\+Client}}.
+
+\Hypertarget{classRoar_1_1NetClient_aaa3655000983df48dcc9c6ddc82c04eb}\index{Roar::NetClient@{Roar::NetClient}!GetFd@{GetFd}}
+\index{GetFd@{GetFd}!Roar::NetClient@{Roar::NetClient}}
+\doxysubsubsection{\texorpdfstring{GetFd()}{GetFd()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetClient_aaa3655000983df48dcc9c6ddc82c04eb} 
+SOCKET\+\_\+\+TYPE Roar\+::\+Net\+Client\+::\+Get\+Fd (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetClient}{Roar\+::\+INet\+Client}}.
+
+\Hypertarget{classRoar_1_1NetClient_a8809c17ad0b4106a3248d6ed59c31091}\index{Roar::NetClient@{Roar::NetClient}!IsConnected@{IsConnected}}
+\index{IsConnected@{IsConnected}!Roar::NetClient@{Roar::NetClient}}
+\doxysubsubsection{\texorpdfstring{IsConnected()}{IsConnected()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetClient_a8809c17ad0b4106a3248d6ed59c31091} 
+bool Roar\+::\+Net\+Client\+::\+Is\+Connected (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetClient}{Roar\+::\+INet\+Client}}.
+
+\Hypertarget{classRoar_1_1NetClient_a65d71e6b783a056230a127c1525d3fe5}\index{Roar::NetClient@{Roar::NetClient}!Receive@{Receive}}
+\index{Receive@{Receive}!Roar::NetClient@{Roar::NetClient}}
+\doxysubsubsection{\texorpdfstring{Receive()}{Receive()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetClient_a65d71e6b783a056230a127c1525d3fe5} 
+int Roar\+::\+Net\+Client\+::\+Receive (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&}]{buffer}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetClient}{Roar\+::\+INet\+Client}}.
+
+\Hypertarget{classRoar_1_1NetClient_aea6c737c71915f091a714f0b8b6abc13}\index{Roar::NetClient@{Roar::NetClient}!Send@{Send}}
+\index{Send@{Send}!Roar::NetClient@{Roar::NetClient}}
+\doxysubsubsection{\texorpdfstring{Send()}{Send()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetClient_aea6c737c71915f091a714f0b8b6abc13} 
+bool Roar\+::\+Net\+Client\+::\+Send (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&}]{buffer}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetClient}{Roar\+::\+INet\+Client}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/Networking.\+h\end{DoxyCompactItemize}
