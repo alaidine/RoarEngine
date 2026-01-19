@@ -338,7 +338,7 @@ class Scene {
 
     // Entity methods
     Entity CreateEntity() { return mEntityManager->CreateEntity(); }
-    
+
     Entity CreateEntity(std::string name) { return mEntityManager->CreateEntity(name); }
 
     void DestroyEntity(Entity entity) {

@@ -1,14 +1,14 @@
-#include "Scene.h"
+#include "Builder.h"
+#include "CameraSystem.h"
+#include "CollisionSystem.h"
+#include "GravitySystem.h"
 #include "InputControllerSystem.h"
 #include "MissileSystem.h"
-#include "GravitySystem.h"
-#include "CollisionSystem.h"
-#include "VelocitySystem.h"
 #include "PhysicCore.h"
-#include "RendererSystem.h"
-#include "CameraSystem.h"
-#include "Builder.h"
 #include "Prefab.h"
+#include "RendererSystem.h"
+#include "Scene.h"
+#include "VelocitySystem.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -21,11 +21,11 @@ int main() {
     const int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "TEST");
-    
-    MiniBuilder::RegisterComponentBuilder registerTest;
-    registerTest.RegisterComponents<Position, Gravity, Velocity, Sprite, InputController, PlayerSprite, AnimationComponent, Tag, MissileTag, playerCooldown, Collider, EnemySprite, LocalPlayerTag, CameraComponent>(_core);
 
- 
+    MiniBuilder::RegisterComponentBuilder registerTest;
+    registerTest.RegisterComponents<Position, Gravity, Velocity, Sprite, InputController, PlayerSprite, AnimationComponent, Tag,
+                                    MissileTag, playerCooldown, Collider, EnemySprite, LocalPlayerTag, CameraComponent>(_core);
+
     auto inputControllerSystem = _core.RegisterSystem<InputControllerSystem>();
     inputControllerSystem->order = 1;
     auto missileSystem = _core.RegisterSystem<MissileSystem>();
@@ -48,16 +48,16 @@ int main() {
     Signature RenderSignature;
     Signature cameraSignature;
     Signature cameraFollowSignature;
-    
+
     MiniBuilder::SystemBuilder inputControllerBuilder(inputControllerSignature);
     inputControllerBuilder.BuildSignature<InputControllerSystem, Position, InputController, PlayerSprite>(_core);
-    
+
     MiniBuilder::SystemBuilder missileSystemBuilder(missileSystemSignature);
-    missileSystemBuilder.BuildSignature<MissileSystem ,Position, AnimationComponent, MissileTag>(_core);
-    
+    missileSystemBuilder.BuildSignature<MissileSystem, Position, AnimationComponent, MissileTag>(_core);
+
     MiniBuilder::SystemBuilder colliderSystemBuilder(colliderSystemSignature);
     colliderSystemBuilder.BuildSignature<CollisionSystem, Position, Collider>(_core);
-    
+
     MiniBuilder::SystemBuilder velocitySystemBuilder(velocitySystemSignature);
     velocitySystemBuilder.BuildSignature<VelocitySystem, Position, Velocity>(_core);
 
@@ -71,7 +71,7 @@ int main() {
     cameraFollowBuilder.BuildSignature<CameraFollowSystem, CameraComponent>(_core);
 
     // Entity camera = Prefab::MakeCamera(_core);
-    Entity player = Prefab::MakePlayer(_core, (float)screenWidth/2, (float)screenHeight/2);
+    Entity player = Prefab::MakePlayer(_core, (float)screenWidth / 2, (float)screenHeight / 2);
     Entity enemy = Prefab::MakeEnemy(_core, (float)300, (float)200);
 
     PyhsicEngine _physicCore(*colliderSystem, *velocitySystem);
@@ -81,7 +81,7 @@ int main() {
     while (!WindowShouldClose()) {
         _core.UpdateAllSystem();
     }
-    
+
     CloseWindow();
 
     return 0;

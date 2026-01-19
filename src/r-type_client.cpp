@@ -1,5 +1,5 @@
-#include "framework.h"
 #include "RoarEngine.h"
+#include "framework.h"
 #include "r-type.h"
 #include <algorithm>
 
@@ -55,7 +55,7 @@ static void init() {
     net = Roar::GetRegistry()->GetSystem<Roar::NetlibNetwork>("NetlibNetwork");
     ROAR_INFO("Network plugin ID: {}", net->GetID());
 
-    client = static_cast<Roar::NetClient*>(net->NewClient());
+    client = static_cast<Roar::NetClient *>(net->NewClient());
 
     state.m_clientInitialized = false;
     state.m_connected = false;
@@ -360,9 +360,9 @@ static void DrawHUD(void) {
 static void DrawBackground(void) {
     float frameWidth = GAME_WIDTH / 4;
     float frameHeight = GAME_HEIGHT / 4;
-    Rectangle source_rect = { 0.0f, 0.0f, (float)frameWidth, (float)frameHeight };
-    Rectangle dest_rect = { 0.0f , 0.0f, GAME_WIDTH, GAME_HEIGHT};
-    Vector2 origin = { 0.0f, 0.0f };
+    Rectangle source_rect = {0.0f, 0.0f, (float)frameWidth, (float)frameHeight};
+    Rectangle dest_rect = {0.0f, 0.0f, GAME_WIDTH, GAME_HEIGHT};
+    Vector2 origin = {0.0f, 0.0f};
 
     DrawTexturePro(state.m_background, source_rect, dest_rect, origin, 0.0f, WHITE);
 }
@@ -584,8 +584,7 @@ static void cleanup() {
 }
 
 int main(int argc, char *argv) {
-    Roar::AppRun(Roar::AppData{
-        .name = "R-Type (Client)",
+    Roar::AppRun(Roar::AppData{.name = "R-Type (Client)",
                                .width = WIDTH,
                                .height = HEIGHT,
                                .headless = false,

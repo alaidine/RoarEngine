@@ -19,6 +19,13 @@ using ComponentType = std::uint8_t;
 
 const ComponentType MAX_COMPONENTS = 32;
 
+enum Layer {
+    LAYER_WORLD = 1 << 0,
+    LAYER_PLAYER = 1 << 1,
+    LAYER_ENEMY = 1 << 2,
+    LAYER_PIECE = 1 << 3,
+};
+
 struct Gravity {
     float force;
 };
@@ -28,11 +35,17 @@ struct Position {
 };
 
 struct Velocity {
-    float speedX;
-    float speedY;
+    Vector2 velocity;
 };
 
 struct Sprite {
+    Texture2D texture;
+    Rectangle source;
+    Vector2 origin;
+
+    float scale;
+    float rotation;
+
     Color color;
 };
 
@@ -46,12 +59,16 @@ struct EnemySprite {
 
 struct Collider {
     Rectangle rect;
-    bool isPlayer;
+
+    int layer; // I am (ex: player)
+    int mask;  // which what i collision
 };
 
 struct AnimationComponent {
     Rectangle rect;
+
     std::array<Rectangle, 5> _animationRectangle;
+
     int _current_frame;
     int _frameCounter;
     int _frameSpeed;
@@ -77,9 +94,13 @@ struct CameraComponent {
     Vector2 position;
     Vector2 target;
     Vector2 offset;
+
     float zoom;
     float rotation;
+
     bool mainCamera;
+
+    Camera2D camera;
 };
 
 // Networked client component for multiplayer
@@ -93,3 +114,21 @@ struct LocalPlayerTag {};
 
 // Tag to identify remote player entities
 struct RemotePlayerTag {};
+
+struct CharacterControllerComponent {
+    Vector2 position;
+    Vector2 veloctity;
+
+    float moveSpeed;
+    float jumpforce;
+    float gravity;
+
+    bool isJumped;
+    bool isGrounded;
+
+    Collider collider;
+};
+
+struct Score {
+    int score;
+};

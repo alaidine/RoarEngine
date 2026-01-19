@@ -1,5 +1,4 @@
 #pragma once
-
 #include "ComponentManager.h"
 #include "EntityManager.h"
 #include "SystemManager.h"
@@ -32,6 +31,21 @@ class Scene {
         Signature sig = _entityManager->GetSignature(entity);
 
         std::cout << "Signature => " << sig << std::endl;
+    }
+
+    template <typename... Components> std::vector<Entity> GetEntitiesWith() {
+        std::vector<Entity> res;
+
+        Signature requiredSignature;
+        (requiredSignature.set(_componentManager->GetComponentType<Components>()), ...);
+
+        for (Entity entity : _entityManager->GetLivingEntities()) {
+            Signature entitySeg = _entityManager->GetSignature(entity);
+
+            if ((entitySeg & requiredSignature) == requiredSignature)
+                res.push_back(entity);
+        }
+        return res;
     }
 
     //------- COMPOENET METHODS ----------

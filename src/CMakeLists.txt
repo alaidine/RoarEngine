@@ -23,6 +23,8 @@ endif()
 # ECS plugin
 add_library(ECSPlugin SHARED
     Prefab.cpp
+    ../include/CharacterController.h
+    ../include/Keybinds.h
     ../include/Prefab.h
     ../include/Builder.h
     ../include/Component.h

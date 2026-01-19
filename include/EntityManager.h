@@ -1,6 +1,6 @@
 #pragma once
-#include "Signature.h"
 #include "Entity.h"
+#include "Signature.h"
 #include <array>
 #include <cassert>
 #include <queue>
@@ -9,6 +9,7 @@ class EntityManager {
   private:
     std::queue<Entity> _entityAvailable{};
     std::array<Signature, MAX_ENTITIES> _signatures{};
+    std::vector<Entity> _livingEntities{};
     uint32_t _livingEntity{};
 
   public:
@@ -22,7 +23,10 @@ class EntityManager {
 
         Entity id = _entityAvailable.front();
         _entityAvailable.pop();
+
+        _livingEntities.push_back(id);
         _livingEntity++;
+
         return id;
     }
 
@@ -31,6 +35,14 @@ class EntityManager {
 
         _signatures[entity].reset();
         _entityAvailable.push(entity);
+
+        for (size_t i = 0; i < _livingEntities.size(); i++) {
+            if (_livingEntities[i] == entity) {
+                _livingEntities[i] = _livingEntities.back();
+                _livingEntities.pop_back();
+                break;
+            }
+        }
         _livingEntity--;
     }
 
@@ -45,4 +57,6 @@ class EntityManager {
 
         return _signatures[entity];
     }
+
+    const std::vector<Entity> &GetLivingEntities() const { return _livingEntities; }
 };

@@ -5,8 +5,8 @@
 
 class ComponentManager {
   private:
-    std::unordered_map<std::string, ComponentType> _componentType{};
-    std::unordered_map<std::string, std::shared_ptr<IComponentArray>> _componentArrays{};
+    std::unordered_map<const char *, ComponentType> _componentType{};
+    std::unordered_map<const char *, std::shared_ptr<IComponentArray>> _componentArrays{};
     ComponentType _nextComponentType{};
 
     template <typename T> std::shared_ptr<ComponentArray<T>> GetComponentArray() {
@@ -20,7 +20,9 @@ class ComponentManager {
   public:
     template <typename T> void RegisterComponent() {
         const char *typeName = typeid(T).name();
+
         assert(_componentType.find(typeName) == _componentType.end() && "Registering component type more than once.");
+
         _componentType.insert({typeName, _nextComponentType});
         _componentArrays.insert({typeName, std::make_shared<ComponentArray<T>>()});
         _nextComponentType++;
@@ -28,7 +30,9 @@ class ComponentManager {
 
     template <typename T> ComponentType GetComponentType() {
         const char *typeName = typeid(T).name();
+
         assert(_componentType.find(typeName) != _componentType.end() && "Component not registered before use.");
+
         return _componentType[typeName];
     }
 
@@ -42,6 +46,7 @@ class ComponentManager {
         auto array = GetComponentArray<T>();
         if (!array)
             return false;
+
         return array->HasData(entity);
     }
 

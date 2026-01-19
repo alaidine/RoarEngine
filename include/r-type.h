@@ -1,7 +1,7 @@
 #pragma once
 
-#include "framework.h"
 #include "INetwork.h"
+#include "framework.h"
 #include "raylib.h"
 
 #define PROTOCOL_NAME "rt-protocol"

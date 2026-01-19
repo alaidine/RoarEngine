@@ -1,4 +1,5 @@
 #pragma once
+#include "Keybinds.h"
 #include "Scene.h"
 #include <raylib.h>
 
@@ -7,59 +8,54 @@ extern Scene _core;
 // class PlayerRender
 
 class RendererSystem : public System {
-  private:
-    Texture2D texture;
-    Rectangle sourcerec;
-    Rectangle destrec;
-    Rectangle rec;
-    Vector2 origin = {0.0f, 0.0f};
-
   public:
     CameraComponent *GetMainCamera() {
-        for (auto const &entity : _entities) {
-            if (!_core.HasComponent<CameraComponent>(entity))
-                continue;
-            auto &cam = _core.GetComponent<CameraComponent>(entity);
+        auto cameras = _core.GetEntitiesWith<CameraComponent>();
+
+        for (Entity e : cameras) {
+            auto &cam = _core.GetComponent<CameraComponent>(e);
             if (cam.mainCamera)
                 return &cam;
         }
         return nullptr;
-    };
+    }
 
     void Update() override {
-
         BeginDrawing();
         ClearBackground(LIGHTGRAY);
-        CameraComponent *cam = nullptr;
-        DrawText("OUI oui", 10, 10, 20, BLACK);
 
-        for (auto const &entity : _entities) {
+        CameraComponent *cam = GetMainCamera();
+        if (cam) {
+            std::cout << "got a cam" << std::endl;
+            BeginMode2D(cam->camera);
+        }
+
+        for (auto &entity : _entities) {
+            if (!_core.HasComponent<Position>(entity) || !_core.HasComponent<Sprite>(entity))
+                continue;
             auto &pos = _core.GetComponent<Position>(entity);
             auto &sprite = _core.GetComponent<Sprite>(entity);
-            auto &anim = _core.GetComponent<AnimationComponent>(entity);
-            auto &tag = _core.GetComponent<Tag>(entity);
 
-            if (_core.HasComponent<PlayerSprite>(entity)) {
-                auto &playerTexture = _core.GetComponent<PlayerSprite>(entity);
-                texture = playerTexture.texture;
-            }
+            Rectangle src = sprite.source;
 
-            sourcerec = {anim.rect.x, anim.rect.y, anim.rect.width, anim.rect.height};
-            if (_core.HasComponent<CameraComponent>(entity))
-                cam = GetMainCamera();
+            Rectangle dst = {pos.position.x, pos.position.y, src.width * sprite.scale, src.height * sprite.scale};
 
-            Vector2 screenPos = pos.position;
+            Vector2 origin = sprite.origin;
+            if (sprite.texture.id == 0)
+                DrawRectangleRec(dst, sprite.color);
+            else
+                DrawTexturePro(sprite.texture, src, dst, origin, sprite.rotation, sprite.color);
+            std::cout << "sprite pos x in render system " << pos.position.x << std::endl;
+        }
 
-            if (cam) {
-                screenPos.x = cam->offset.x + (pos.position.x - cam->position.x) * cam->zoom;
-                screenPos.y = cam->offset.y + (pos.position.y - cam->position.y) * cam->zoom;
-            }
+        if (cam)
+            EndMode2D();
 
-            float scale = cam ? cam->zoom : 1.0f;
-
-            destrec = {screenPos.x, screenPos.y, anim.rect.width * 2.0f * scale, anim.rect.height * 2.0f * scale};
-
-            DrawTexturePro(texture, sourcerec, destrec, origin, 0.0f, sprite.color);
+        for (auto &entity : _entities) {
+            if (!_core.HasComponent<Score>(entity))
+                continue;
+            auto &score = _core.GetComponent<Score>(entity);
+            DrawText(TextFormat("Score: %d", score.score), 10, 10, 20, BLACK);
         }
 
         EndDrawing();

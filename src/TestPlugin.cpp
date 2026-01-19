@@ -1,5 +1,5 @@
-#include "PluginManager.h"
 #include "IPlugin.h"
+#include "PluginManager.h"
 
 #include <iostream>
 

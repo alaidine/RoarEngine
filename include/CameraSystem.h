@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Scene.h"
 #include "System.h"
 
@@ -10,16 +9,24 @@ class CameraSystem : public System {
     void Update() override {
         float followSpeed = 0.1f;
 
-        for (auto entity : _entities) {
-            if (!_core.HasComponent<CameraComponent>(entity))
+        for (auto e : _entities) {
+            if (!_core.HasComponent<CameraComponent>(e))
                 continue;
 
-            auto &cam = _core.GetComponent<CameraComponent>(entity);
+            auto &cam = _core.GetComponent<CameraComponent>(e);
 
-            Vector2 dif = {cam.target.x - cam.position.x, cam.target.y - cam.position.y};
+            Vector2 diff = {cam.target.x - cam.position.x, cam.target.y - cam.position.y};
 
-            cam.position.x += dif.x * followSpeed;
-            cam.position.y += dif.y * followSpeed;
+            cam.position.x += diff.x * followSpeed;
+            cam.position.y += diff.y * followSpeed;
+
+            // sync vers Raylib
+            cam.camera.target = cam.position;
+            cam.camera.offset = cam.offset;
+            cam.camera.zoom = cam.zoom;
+            cam.camera.rotation = cam.rotation;
+
+            std::cout << "Cam poisition " << cam.camera.target.x << std::endl;
         }
     }
 };
@@ -27,27 +34,19 @@ class CameraSystem : public System {
 class CameraFollowSystem : public System {
   public:
     void Update() override {
-        Entity playerEntity = -1;
+        Entity player = -1;
 
-        // find local player
-        for (auto entity : _entities) {
-            if (_core.HasComponent<Position>(entity) && _core.HasComponent<LocalPlayerTag>(entity)) {
-                playerEntity = entity;
-                break;
-            }
-        }
-
-        if (playerEntity == -1)
+        // 1) Trouver le joueur (recherche globale)
+        auto players = _core.GetEntitiesWith<LocalPlayerTag, Position>();
+        if (players.empty())
             return;
 
-        auto &playerPos = _core.GetComponent<Position>(playerEntity);
+        player = *players.begin();
+        auto &playerPos = _core.GetComponent<Position>(player);
 
-        // update camera target
-        for (auto entity : _entities) {
-            if (!_core.HasComponent<CameraComponent>(entity))
-                continue;
-
-            auto &cam = _core.GetComponent<CameraComponent>(entity);
+        // 2) Appliquer la cible aux caméras
+        for (auto e : _entities) {
+            auto &cam = _core.GetComponent<CameraComponent>(e);
             if (!cam.mainCamera)
                 continue;
 

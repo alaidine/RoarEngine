@@ -1,5 +1,5 @@
-#include "framework.h"
 #include "RoarEngine.h"
+#include "framework.h"
 #include "r-type.h"
 
 // A simple structure to represent connected clients
@@ -29,7 +29,7 @@ static void init() {
     Roar::PluginSystem::Startup();
 
     net = Roar::GetRegistry()->GetSystem<Roar::NetlibNetwork>("NetlibNetwork");
-    server = static_cast<Roar::NetServer*>(net->NewServer(PORT));
+    server = static_cast<Roar::NetServer *>(net->NewServer(PORT));
 
     if (!server->Start()) {
         ROAR_ERROR("Failed to start server on port {}", PORT);

@@ -4,7 +4,6 @@
 #include <limits.h>
 #include <stdlib.h>
 
-
 // Serialization functions using NetBuffer
 
 void SerializeMissile(Roar::INetBuffer &buffer, const Missile &missile) {
@@ -59,7 +58,7 @@ UpdateStateMessage DeserializeUpdateStateMessage(Roar::INetBuffer &buffer) {
     return msg;
 }
 
-void SerializeClientState(Roar::INetBuffer & buffer, const ClientState &state) {
+void SerializeClientState(Roar::INetBuffer &buffer, const ClientState &state) {
     buffer.WriteUInt32(state.client_id);
     buffer.WriteInt32(state.x);
     buffer.WriteInt32(state.y);

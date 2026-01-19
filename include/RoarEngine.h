@@ -4,8 +4,8 @@
 #include "PluginManager.h"
 #include "framework.h"
 #include "raylib.h"
-#include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/spdlog.h"
 
 #include <memory>
 
@@ -42,6 +42,7 @@ class Log {
     static void Init();
     static std::shared_ptr<spdlog::logger> &GetCoreLogger();
     static std::shared_ptr<spdlog::logger> &GetClientLogger();
+
   private:
     static std::shared_ptr<spdlog::logger> s_CoreLogger;
     static std::shared_ptr<spdlog::logger> s_ClientLogger;
