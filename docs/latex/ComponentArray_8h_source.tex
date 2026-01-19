@@ -1,0 +1,67 @@
+\doxysection{Component\+Array.\+h}
+\hypertarget{ComponentArray_8h_source}{}\label{ComponentArray_8h_source}\index{include/ComponentArray.h@{include/ComponentArray.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}Component.h"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}Entity.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}Signature.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <cassert>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <unordered\_map>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classIComponentArray}{IComponentArray}}\ \{}
+\DoxyCodeLine{00009\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classIComponentArray}{\string~IComponentArray}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ EntityDestroyed(Entity\ entity)\ =\ 0;}
+\DoxyCodeLine{00012\ \};}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classComponentArray}{ComponentArray}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classIComponentArray}{IComponentArray}}\ \{}
+\DoxyCodeLine{00015\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00016\ \ \ \ \ std::array<T,\ MAX\_ENTITIES>\ \_componentArray;}
+\DoxyCodeLine{00017\ \ \ \ \ std::unordered\_map<Entity,\ size\_t>\ \_entityToIndexMap;}
+\DoxyCodeLine{00018\ \ \ \ \ std::unordered\_map<size\_t,\ Entity>\ \_indexToEntityMap;}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ size;}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{void}\ InsertData(Entity\ entity,\ T\ component)\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ assert(\_entityToIndexMap.find(entity)\ ==\ \_entityToIndexMap.end()\ \&\&\ \textcolor{stringliteral}{"{}Component\ added\ to\ same\ entity\ more\ than\ once."{}});}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ newIndex\ =\ size;}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \_entityToIndexMap[entity]\ =\ newIndex;}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \_indexToEntityMap[newIndex]\ =\ entity;}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \_componentArray[newIndex]\ =\ component;}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ size++;}
+\DoxyCodeLine{00030\ \ \ \ \ \}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{void}\ RemoveData(Entity\ entity)\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ assert(\_entityToIndexMap.find(entity)\ !=\ \_entityToIndexMap.end()\ \&\&\ \textcolor{stringliteral}{"{}Removing\ non\ existence\ entity."{}});}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ indexOfRemovedEntity\ =\ \_entityToIndexMap[entity];}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ indexOfLastElement\ =\ size\ -\/\ 1;}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \_componentArray[indexOfRemovedEntity]\ =\ \_componentArray[indexOfLastElement];}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ Entity\ entityOfLastElement\ =\ \_indexToEntityMap[indexOfLastElement];}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \_entityToIndexMap[entityOfLastElement]\ =\ indexOfRemovedEntity;}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \_indexToEntityMap[indexOfRemovedEntity]\ =\ entityOfLastElement;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \_entityToIndexMap.erase(entity);}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \_indexToEntityMap.erase(indexOfLastElement);}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ size-\/-\/;}
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ T\ \&GetData(Entity\ entity)\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ assert(\_entityToIndexMap.find(entity)\ !=\ \_entityToIndexMap.end()\ \&\&\ \textcolor{stringliteral}{"{}Try\ to\ get\ data\ of\ non\ existence\ entity."{}});}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_componentArray[\_entityToIndexMap[entity]];}
+\DoxyCodeLine{00053\ \ \ \ \ \}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{void}\ EntityDestroyed(Entity\ entity)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_entityToIndexMap.find(entity)\ !=\ \_entityToIndexMap.end())}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ RemoveData(entity);}
+\DoxyCodeLine{00058\ \ \ \ \ \}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{bool}\ HasData(Entity\ entity)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \_entityToIndexMap.find(entity)\ !=\ \_entityToIndexMap.end();\ \}}
+\DoxyCodeLine{00061\ \};}
+
+\end{DoxyCode}

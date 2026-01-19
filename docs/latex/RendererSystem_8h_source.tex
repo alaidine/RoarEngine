@@ -1,0 +1,73 @@
+\doxysection{Renderer\+System.\+h}
+\hypertarget{RendererSystem_8h_source}{}\label{RendererSystem_8h_source}\index{include/RendererSystem.h@{include/RendererSystem.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}Scene.h"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <raylib.h>}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{keyword}{extern}\ \mbox{\hyperlink{classScene}{Scene}}\ \_core;}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ class\ PlayerRender}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classRendererSystem}{RendererSystem}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classSystem}{System}}\ \{}
+\DoxyCodeLine{00010\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00011\ \ \ \ \ Texture2D\ texture;}
+\DoxyCodeLine{00012\ \ \ \ \ Rectangle\ sourcerec;}
+\DoxyCodeLine{00013\ \ \ \ \ Rectangle\ destrec;}
+\DoxyCodeLine{00014\ \ \ \ \ Rectangle\ rec;}
+\DoxyCodeLine{00015\ \ \ \ \ Vector2\ origin\ =\ \{0.0f,\ 0.0f\};}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00018\ \ \ \ \ \mbox{\hyperlink{structCameraComponent}{CameraComponent}}\ *GetMainCamera()\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ \&entity\ :\ \_entities)\ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\_core.HasComponent<\mbox{\hyperlink{structCameraComponent}{CameraComponent}}>(entity))}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \&cam\ =\ \_core.GetComponent<\mbox{\hyperlink{structCameraComponent}{CameraComponent}}>(entity);}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cam.mainCamera)}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&cam;}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00027\ \ \ \ \ \};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{void}\ Update()\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ BeginDrawing();}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ ClearBackground(LIGHTGRAY);}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structCameraComponent}{CameraComponent}}\ *cam\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ DrawText(\textcolor{stringliteral}{"{}OUI\ oui"{}},\ 10,\ 10,\ 20,\ BLACK);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ \&entity\ :\ \_entities)\ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \&pos\ =\ \_core.GetComponent<\mbox{\hyperlink{structPosition}{Position}}>(entity);}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \&sprite\ =\ \_core.GetComponent<\mbox{\hyperlink{structSprite}{Sprite}}>(entity);}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \&anim\ =\ \_core.GetComponent<\mbox{\hyperlink{structAnimationComponent}{AnimationComponent}}>(entity);}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \&tag\ =\ \_core.GetComponent<\mbox{\hyperlink{structTag}{Tag}}>(entity);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_core.HasComponent<\mbox{\hyperlink{structPlayerSprite}{PlayerSprite}}>(entity))\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \&playerTexture\ =\ \_core.GetComponent<\mbox{\hyperlink{structPlayerSprite}{PlayerSprite}}>(entity);}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ texture\ =\ playerTexture.texture;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ sourcerec\ =\ \{anim.rect.x,\ anim.rect.y,\ anim.rect.width,\ anim.rect.height\};}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_core.HasComponent<\mbox{\hyperlink{structCameraComponent}{CameraComponent}}>(entity))}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cam\ =\ GetMainCamera();}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ Vector2\ screenPos\ =\ pos.position;}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cam)\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ screenPos.x\ =\ cam-\/>offset.x\ +\ (pos.position.x\ -\/\ cam-\/>position.x)\ *\ cam-\/>zoom;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ screenPos.y\ =\ cam-\/>offset.y\ +\ (pos.position.y\ -\/\ cam-\/>position.y)\ *\ cam-\/>zoom;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ scale\ =\ cam\ ?\ cam-\/>zoom\ :\ 1.0f;}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ destrec\ =\ \{screenPos.x,\ screenPos.y,\ anim.rect.width\ *\ 2.0f\ *\ scale,\ anim.rect.height\ *\ 2.0f\ *\ scale\};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ DrawTexturePro(texture,\ sourcerec,\ destrec,\ origin,\ 0.0f,\ sprite.color);}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ EndDrawing();}
+\DoxyCodeLine{00066\ \ \ \ \ \}}
+\DoxyCodeLine{00067\ \};}
+
+\end{DoxyCode}

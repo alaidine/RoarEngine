@@ -1,0 +1,60 @@
+\doxysection{Component\+Manager.\+h}
+\hypertarget{ComponentManager_8h_source}{}\label{ComponentManager_8h_source}\index{include/ComponentManager.h@{include/ComponentManager.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}Component.h"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}ComponentArray.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classComponentManager}{ComponentManager}}\ \{}
+\DoxyCodeLine{00007\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00008\ \ \ \ \ std::unordered\_map<std::string,\ ComponentType>\ \_componentType\{\};}
+\DoxyCodeLine{00009\ \ \ \ \ std::unordered\_map<std::string,\ std::shared\_ptr<IComponentArray>>\ \_componentArrays\{\};}
+\DoxyCodeLine{00010\ \ \ \ \ ComponentType\ \_nextComponentType\{\};}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ std::shared\_ptr<ComponentArray<T>>\ GetComponentArray()\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *typeName\ =\ \textcolor{keyword}{typeid}(T).name();}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ assert(\_componentType.find(typeName)\ !=\ \_componentType.end()\ \&\&\ \textcolor{stringliteral}{"{}Component\ not\ registered\ before\ use."{}});}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::static\_pointer\_cast<ComponentArray<T>>(\_componentArrays[typeName]);}
+\DoxyCodeLine{00018\ \ \ \ \ \}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keywordtype}{void}\ RegisterComponent()\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *typeName\ =\ \textcolor{keyword}{typeid}(T).name();}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ assert(\_componentType.find(typeName)\ ==\ \_componentType.end()\ \&\&\ \textcolor{stringliteral}{"{}Registering\ component\ type\ more\ than\ once."{}});}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \_componentType.insert(\{typeName,\ \_nextComponentType\});}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \_componentArrays.insert(\{typeName,\ std::make\_shared<ComponentArray<T>>()\});}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \_nextComponentType++;}
+\DoxyCodeLine{00027\ \ \ \ \ \}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ ComponentType\ GetComponentType()\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *typeName\ =\ \textcolor{keyword}{typeid}(T).name();}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ assert(\_componentType.find(typeName)\ !=\ \_componentType.end()\ \&\&\ \textcolor{stringliteral}{"{}Component\ not\ registered\ before\ use."{}});}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_componentType[typeName];}
+\DoxyCodeLine{00033\ \ \ \ \ \}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keywordtype}{void}\ AddComponent(Entity\ entity,\ T\ component)\ \{\ GetComponentArray<T>()-\/>InsertData(entity,\ component);\ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keywordtype}{void}\ RemoveComponent(Entity\ entity)\ \{\ GetComponentArray<T>()-\/>RemoveData(entity);\ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ T\ \&GetComponent(Entity\ entity)\ \{\ \textcolor{keywordflow}{return}\ GetComponentArray<T>()-\/>GetData(entity);\ \}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keywordtype}{bool}\ HasComponent(Entity\ entity)\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ array\ =\ GetComponentArray<T>();}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!array)}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ array-\/>HasData(entity);}
+\DoxyCodeLine{00046\ \ \ \ \ \}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{void}\ EntityDestroyed(Entity\ entity)\ \{}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ \&pair\ :\ \_componentArrays)\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ \&component\ =\ pair.second;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ component-\/>EntityDestroyed(entity);}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00053\ \ \ \ \ \}}
+\DoxyCodeLine{00054\ \};}
+
+\end{DoxyCode}

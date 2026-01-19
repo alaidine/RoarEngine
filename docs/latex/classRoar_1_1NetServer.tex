@@ -1,0 +1,72 @@
+\doxysection{Roar\+::Net\+Server Class Reference}
+\hypertarget{classRoar_1_1NetServer}{}\label{classRoar_1_1NetServer}\index{Roar::NetServer@{Roar::NetServer}}
+Inheritance diagram for Roar\+::Net\+Server\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classRoar_1_1NetServer}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classRoar_1_1NetServer_a13c67a78da39c995bb1a0791e75eb220}\label{classRoar_1_1NetServer_a13c67a78da39c995bb1a0791e75eb220} 
+{\bfseries Net\+Server} (uint16\+\_\+t port)
+\item 
+bool \mbox{\hyperlink{classRoar_1_1NetServer_af029f2458890a5f08a30329a50d9f792}{Start}} () override
+\item 
+int \mbox{\hyperlink{classRoar_1_1NetServer_a4453fb76f1129b6141aed50ae51a3907}{Receive}} (\mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&buffer, sockaddr\+\_\+in \&from) override
+\item 
+bool \mbox{\hyperlink{classRoar_1_1NetServer_abc2c38e0ed01dfb66902c48d9dec9652}{Send\+To}} (const \mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&buffer, const sockaddr\+\_\+in \&dest) override
+\item 
+SOCKET\+\_\+\+TYPE \mbox{\hyperlink{classRoar_1_1NetServer_a7de0f8f83b93d6b362f72050e630a30a}{Get\+Fd}} () const override
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{classRoar_1_1NetServer_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classRoar_1_1NetServer_a7de0f8f83b93d6b362f72050e630a30a}\index{Roar::NetServer@{Roar::NetServer}!GetFd@{GetFd}}
+\index{GetFd@{GetFd}!Roar::NetServer@{Roar::NetServer}}
+\doxysubsubsection{\texorpdfstring{GetFd()}{GetFd()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetServer_a7de0f8f83b93d6b362f72050e630a30a} 
+SOCKET\+\_\+\+TYPE Roar\+::\+Net\+Server\+::\+Get\+Fd (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetServer}{Roar\+::\+INet\+Server}}.
+
+\Hypertarget{classRoar_1_1NetServer_a4453fb76f1129b6141aed50ae51a3907}\index{Roar::NetServer@{Roar::NetServer}!Receive@{Receive}}
+\index{Receive@{Receive}!Roar::NetServer@{Roar::NetServer}}
+\doxysubsubsection{\texorpdfstring{Receive()}{Receive()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetServer_a4453fb76f1129b6141aed50ae51a3907} 
+int Roar\+::\+Net\+Server\+::\+Receive (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&}]{buffer}{, }\item[{sockaddr\+\_\+in \&}]{from}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetServer}{Roar\+::\+INet\+Server}}.
+
+\Hypertarget{classRoar_1_1NetServer_abc2c38e0ed01dfb66902c48d9dec9652}\index{Roar::NetServer@{Roar::NetServer}!SendTo@{SendTo}}
+\index{SendTo@{SendTo}!Roar::NetServer@{Roar::NetServer}}
+\doxysubsubsection{\texorpdfstring{SendTo()}{SendTo()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetServer_abc2c38e0ed01dfb66902c48d9dec9652} 
+bool Roar\+::\+Net\+Server\+::\+Send\+To (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&}]{buffer}{, }\item[{const sockaddr\+\_\+in \&}]{dest}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetServer}{Roar\+::\+INet\+Server}}.
+
+\Hypertarget{classRoar_1_1NetServer_af029f2458890a5f08a30329a50d9f792}\index{Roar::NetServer@{Roar::NetServer}!Start@{Start}}
+\index{Start@{Start}!Roar::NetServer@{Roar::NetServer}}
+\doxysubsubsection{\texorpdfstring{Start()}{Start()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetServer_af029f2458890a5f08a30329a50d9f792} 
+bool Roar\+::\+Net\+Server\+::\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetServer}{Roar\+::\+INet\+Server}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/Networking.\+h\end{DoxyCompactItemize}

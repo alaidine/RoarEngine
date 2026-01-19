@@ -48,6 +48,13 @@ add_library(ECSPlugin SHARED
 target_include_directories(ECSPlugin PUBLIC ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(ECSPlugin PUBLIC RoarEngine)
 
+# Keybinds Librairy
+add_library(Keybinds SHARED
+    ../include/Keybinds.hpp
+    Keybinds.cpp)
+target_include_directories(Keybinds PUBLIC ${CMAKE_SOURCE_DIR}/include)
+target_link_libraries(Keybinds PUBLIC raylib asio::asio glm::glm spdlog::spdlog)
+
 # Networking plugin
 add_library(NetworkPlugin SHARED Networking.cpp ../include/INetwork.h ../include/Networking.h)
 target_include_directories(NetworkPlugin PUBLIC ${CMAKE_SOURCE_DIR}/include)

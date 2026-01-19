@@ -1,0 +1,93 @@
+\doxysection{Roar\+::Net\+Socket Class Reference}
+\hypertarget{classRoar_1_1NetSocket}{}\label{classRoar_1_1NetSocket}\index{Roar::NetSocket@{Roar::NetSocket}}
+Inheritance diagram for Roar\+::Net\+Socket\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classRoar_1_1NetSocket}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classRoar_1_1NetSocket_a7f78890943e26b437f31df66bf6cc948}{Bind}} (uint16\+\_\+t port) override
+\item 
+bool \mbox{\hyperlink{classRoar_1_1NetSocket_a32e5787329edd9a8dc75531c93e9d925}{Send\+To}} (const \mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&buffer, const sockaddr\+\_\+in \&dest) override
+\item 
+bool \mbox{\hyperlink{classRoar_1_1NetSocket_aa4000c07f0fd7f2a1f4e849226b7bc2c}{Send\+To}} (const \mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&buffer, const char \texorpdfstring{$\ast$}{*}ip, uint16\+\_\+t port) override
+\item 
+int \mbox{\hyperlink{classRoar_1_1NetSocket_abe9c963a55c2d1587b1436ddbead5589}{Receive\+From}} (\mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&buffer, sockaddr\+\_\+in \&from) override
+\item 
+SOCKET\+\_\+\+TYPE \mbox{\hyperlink{classRoar_1_1NetSocket_a3dc6abb434b472fc685311e4d6f263b4}{Get\+Fd}} () const override
+\item 
+bool \mbox{\hyperlink{classRoar_1_1NetSocket_a064b7c4d9c14194a43b59dc885be90fc}{Is\+Bound}} () const override
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{classRoar_1_1NetSocket_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classRoar_1_1NetSocket_a7f78890943e26b437f31df66bf6cc948}\index{Roar::NetSocket@{Roar::NetSocket}!Bind@{Bind}}
+\index{Bind@{Bind}!Roar::NetSocket@{Roar::NetSocket}}
+\doxysubsubsection{\texorpdfstring{Bind()}{Bind()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetSocket_a7f78890943e26b437f31df66bf6cc948} 
+bool Roar\+::\+Net\+Socket\+::\+Bind (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{port}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetSocket}{Roar\+::\+INet\+Socket}}.
+
+\Hypertarget{classRoar_1_1NetSocket_a3dc6abb434b472fc685311e4d6f263b4}\index{Roar::NetSocket@{Roar::NetSocket}!GetFd@{GetFd}}
+\index{GetFd@{GetFd}!Roar::NetSocket@{Roar::NetSocket}}
+\doxysubsubsection{\texorpdfstring{GetFd()}{GetFd()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetSocket_a3dc6abb434b472fc685311e4d6f263b4} 
+SOCKET\+\_\+\+TYPE Roar\+::\+Net\+Socket\+::\+Get\+Fd (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetSocket}{Roar\+::\+INet\+Socket}}.
+
+\Hypertarget{classRoar_1_1NetSocket_a064b7c4d9c14194a43b59dc885be90fc}\index{Roar::NetSocket@{Roar::NetSocket}!IsBound@{IsBound}}
+\index{IsBound@{IsBound}!Roar::NetSocket@{Roar::NetSocket}}
+\doxysubsubsection{\texorpdfstring{IsBound()}{IsBound()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetSocket_a064b7c4d9c14194a43b59dc885be90fc} 
+bool Roar\+::\+Net\+Socket\+::\+Is\+Bound (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetSocket}{Roar\+::\+INet\+Socket}}.
+
+\Hypertarget{classRoar_1_1NetSocket_abe9c963a55c2d1587b1436ddbead5589}\index{Roar::NetSocket@{Roar::NetSocket}!ReceiveFrom@{ReceiveFrom}}
+\index{ReceiveFrom@{ReceiveFrom}!Roar::NetSocket@{Roar::NetSocket}}
+\doxysubsubsection{\texorpdfstring{ReceiveFrom()}{ReceiveFrom()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetSocket_abe9c963a55c2d1587b1436ddbead5589} 
+int Roar\+::\+Net\+Socket\+::\+Receive\+From (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&}]{buffer}{, }\item[{sockaddr\+\_\+in \&}]{from}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetSocket}{Roar\+::\+INet\+Socket}}.
+
+\Hypertarget{classRoar_1_1NetSocket_aa4000c07f0fd7f2a1f4e849226b7bc2c}\index{Roar::NetSocket@{Roar::NetSocket}!SendTo@{SendTo}}
+\index{SendTo@{SendTo}!Roar::NetSocket@{Roar::NetSocket}}
+\doxysubsubsection{\texorpdfstring{SendTo()}{SendTo()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetSocket_aa4000c07f0fd7f2a1f4e849226b7bc2c} 
+bool Roar\+::\+Net\+Socket\+::\+Send\+To (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&}]{buffer}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{ip}{, }\item[{uint16\+\_\+t}]{port}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetSocket}{Roar\+::\+INet\+Socket}}.
+
+\Hypertarget{classRoar_1_1NetSocket_a32e5787329edd9a8dc75531c93e9d925}\index{Roar::NetSocket@{Roar::NetSocket}!SendTo@{SendTo}}
+\index{SendTo@{SendTo}!Roar::NetSocket@{Roar::NetSocket}}
+\doxysubsubsection{\texorpdfstring{SendTo()}{SendTo()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetSocket_a32e5787329edd9a8dc75531c93e9d925} 
+bool Roar\+::\+Net\+Socket\+::\+Send\+To (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&}]{buffer}{, }\item[{const sockaddr\+\_\+in \&}]{dest}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetSocket}{Roar\+::\+INet\+Socket}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/Networking.\+h\end{DoxyCompactItemize}

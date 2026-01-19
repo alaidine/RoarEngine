@@ -1,0 +1,101 @@
+\doxysection{Component.\+h}
+\hypertarget{Component_8h_source}{}\label{Component_8h_source}\index{include/Component.h@{include/Component.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ <array>}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <raylib.h>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#ifndef\ MAX}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#define\ MAX(a,\ b)\ (((a)\ >\ (b))\ ?\ (a)\ :\ (b))}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ MIN}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ MIN(a,\ b)\ (((a)\ <\ (b))\ ?\ (a)\ :\ (b))}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#define\ GAME\_WIDTH\ 800}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ GAME\_HEIGHT\ 600}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ TARGET\_FPS\ 100}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{using\ }ComponentType\ =\ std::uint8\_t;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{const}\ ComponentType\ MAX\_COMPONENTS\ =\ 32;}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structGravity}{Gravity}}\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{float}\ force;}
+\DoxyCodeLine{00024\ \};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structPosition}{Position}}\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ Vector2\ position;}
+\DoxyCodeLine{00028\ \};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structVelocity}{Velocity}}\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{float}\ speedX;}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{float}\ speedY;}
+\DoxyCodeLine{00033\ \};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structSprite}{Sprite}}\ \{}
+\DoxyCodeLine{00036\ \ \ \ \ Color\ color;}
+\DoxyCodeLine{00037\ \};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structPlayerSprite}{PlayerSprite}}\ \{}
+\DoxyCodeLine{00040\ \ \ \ \ Texture2D\ texture;}
+\DoxyCodeLine{00041\ \};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structEnemySprite}{EnemySprite}}\ \{}
+\DoxyCodeLine{00044\ \ \ \ \ Texture2D\ texture;}
+\DoxyCodeLine{00045\ \};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structCollider}{Collider}}\ \{}
+\DoxyCodeLine{00048\ \ \ \ \ Rectangle\ rect;}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{bool}\ isPlayer;}
+\DoxyCodeLine{00050\ \};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structAnimationComponent}{AnimationComponent}}\ \{}
+\DoxyCodeLine{00053\ \ \ \ \ Rectangle\ rect;}
+\DoxyCodeLine{00054\ \ \ \ \ std::array<Rectangle,\ 5>\ \_animationRectangle;}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{int}\ \_current\_frame;}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{int}\ \_frameCounter;}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{int}\ \_frameSpeed;}
+\DoxyCodeLine{00058\ \};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structInputController}{InputController}}\ \{\};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structTag}{Tag}}\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{bool}\ isPlayer;}
+\DoxyCodeLine{00064\ \};}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structEnemyTag}{EnemyTag}}\ \{}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{bool}\ isEnemy;}
+\DoxyCodeLine{00068\ \};}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structMissileTag}{MissileTag}}\ \{\};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structplayerCooldown}{playerCooldown}}\ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{bool}\ canFire;}
+\DoxyCodeLine{00074\ \};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structCameraComponent}{CameraComponent}}\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ Vector2\ position;}
+\DoxyCodeLine{00078\ \ \ \ \ Vector2\ target;}
+\DoxyCodeLine{00079\ \ \ \ \ Vector2\ offset;}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{float}\ zoom;}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{float}\ rotation;}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{bool}\ mainCamera;}
+\DoxyCodeLine{00083\ \};}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{comment}{//\ Networked\ client\ component\ for\ multiplayer}}
+\DoxyCodeLine{00086\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structNetworkedClient}{NetworkedClient}}\ \{}
+\DoxyCodeLine{00087\ \ \ \ \ uint32\_t\ client\_id;}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{bool}\ is\_local;}
+\DoxyCodeLine{00089\ \};}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{comment}{//\ Tag\ to\ identify\ local\ player\ entity}}
+\DoxyCodeLine{00092\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structLocalPlayerTag}{LocalPlayerTag}}\ \{\};}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{comment}{//\ Tag\ to\ identify\ remote\ player\ entities}}
+\DoxyCodeLine{00095\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structRemotePlayerTag}{RemotePlayerTag}}\ \{\};}
+
+\end{DoxyCode}

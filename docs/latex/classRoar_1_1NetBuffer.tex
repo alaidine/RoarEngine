@@ -1,0 +1,264 @@
+\doxysection{Roar\+::Net\+Buffer Class Reference}
+\hypertarget{classRoar_1_1NetBuffer}{}\label{classRoar_1_1NetBuffer}\index{Roar::NetBuffer@{Roar::NetBuffer}}
+Inheritance diagram for Roar\+::Net\+Buffer\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classRoar_1_1NetBuffer}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classRoar_1_1NetBuffer_aa51949ef0f928c1b09f798165e917a82}\label{classRoar_1_1NetBuffer_aa51949ef0f928c1b09f798165e917a82} 
+{\bfseries Net\+Buffer} (size\+\_\+t capacity=4096)
+\item 
+void \mbox{\hyperlink{classRoar_1_1NetBuffer_a78e359ef015ccfde12aa586350cfdcae}{Write\+UInt8}} (uint8\+\_\+t value) override
+\item 
+void \mbox{\hyperlink{classRoar_1_1NetBuffer_a00d4052b1743493551d544fdf2e9b2aa}{Write\+UInt16}} (uint16\+\_\+t value) override
+\item 
+void \mbox{\hyperlink{classRoar_1_1NetBuffer_a16149fbf652979efaaf70980af466d2f}{Write\+UInt32}} (uint32\+\_\+t value) override
+\item 
+void \mbox{\hyperlink{classRoar_1_1NetBuffer_aa7ea3e8fcc8e9d3a515e3779cc0a139c}{Write\+Int32}} (int32\+\_\+t value) override
+\item 
+void \mbox{\hyperlink{classRoar_1_1NetBuffer_a87012cbbefe60ae81ec6f71c6e5d3e96}{Write\+Float}} (float value) override
+\item 
+void \mbox{\hyperlink{classRoar_1_1NetBuffer_a894bd937f225ce35b9e91c7ea4db1f68}{Write\+Bytes}} (const void \texorpdfstring{$\ast$}{*}data, size\+\_\+t length) override
+\item 
+uint8\+\_\+t \mbox{\hyperlink{classRoar_1_1NetBuffer_af2f663b29726a8db73008c6c9f0e0fa7}{Read\+UInt8}} () override
+\item 
+uint16\+\_\+t \mbox{\hyperlink{classRoar_1_1NetBuffer_a9d73a66a29aae6f04333c5837ef3acab}{Read\+UInt16}} () override
+\item 
+uint32\+\_\+t \mbox{\hyperlink{classRoar_1_1NetBuffer_a478f777a80c576b5c73b1e8340a8935c}{Read\+UInt32}} () override
+\item 
+int32\+\_\+t \mbox{\hyperlink{classRoar_1_1NetBuffer_ae078ffd7a7c6520a61ce67d8d80dce1e}{Read\+Int32}} () override
+\item 
+float \mbox{\hyperlink{classRoar_1_1NetBuffer_ac3965c339583fee2600975a0c41d1263}{Read\+Float}} () override
+\item 
+void \mbox{\hyperlink{classRoar_1_1NetBuffer_a88dbe05dd0ed88e65cf8aac4c9343864}{Read\+Bytes}} (void \texorpdfstring{$\ast$}{*}dest, size\+\_\+t length) override
+\item 
+void \mbox{\hyperlink{classRoar_1_1NetBuffer_ad9be3372adbf9fbef4fe2631c9ed239c}{Clear}} () override
+\item 
+void \mbox{\hyperlink{classRoar_1_1NetBuffer_ac1aefad480b956c9fc58575182039b98}{Reset\+Read}} () override
+\item 
+uint8\+\_\+t \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classRoar_1_1NetBuffer_a4bdb165fcc99a9736533cecc07a73c49}{Get\+Data}} () override
+\item 
+const uint8\+\_\+t \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classRoar_1_1NetBuffer_a4682b20365fbeb5f4fb85f5cdc5f2672}{Get\+Data}} () const override
+\item 
+size\+\_\+t \mbox{\hyperlink{classRoar_1_1NetBuffer_ae0bbf990a082bc89d84f3dff1d1b8a52}{Get\+Size}} () const override
+\item 
+size\+\_\+t \mbox{\hyperlink{classRoar_1_1NetBuffer_a999edd107a94eb32e6b775f0df3cda04}{Get\+Read\+Pos}} () const override
+\item 
+bool \mbox{\hyperlink{classRoar_1_1NetBuffer_a7017b0f2890d5333719b250baf6d5495}{Can\+Read}} (size\+\_\+t bytes) const override
+\item 
+void \mbox{\hyperlink{classRoar_1_1NetBuffer_aecd41bb83da49e5f6b31f663e12414e7}{Load\+Data}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, size\+\_\+t size) override
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{classRoar_1_1NetBuffer_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classRoar_1_1NetBuffer_a7017b0f2890d5333719b250baf6d5495}\index{Roar::NetBuffer@{Roar::NetBuffer}!CanRead@{CanRead}}
+\index{CanRead@{CanRead}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{CanRead()}{CanRead()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_a7017b0f2890d5333719b250baf6d5495} 
+bool Roar\+::\+Net\+Buffer\+::\+Can\+Read (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{bytes}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_ad9be3372adbf9fbef4fe2631c9ed239c}\index{Roar::NetBuffer@{Roar::NetBuffer}!Clear@{Clear}}
+\index{Clear@{Clear}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{Clear()}{Clear()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_ad9be3372adbf9fbef4fe2631c9ed239c} 
+void Roar\+::\+Net\+Buffer\+::\+Clear (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_a4682b20365fbeb5f4fb85f5cdc5f2672}\index{Roar::NetBuffer@{Roar::NetBuffer}!GetData@{GetData}}
+\index{GetData@{GetData}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{GetData()}{GetData()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_a4682b20365fbeb5f4fb85f5cdc5f2672} 
+const uint8\+\_\+t \texorpdfstring{$\ast$}{*} Roar\+::\+Net\+Buffer\+::\+Get\+Data (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_a4bdb165fcc99a9736533cecc07a73c49}\index{Roar::NetBuffer@{Roar::NetBuffer}!GetData@{GetData}}
+\index{GetData@{GetData}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{GetData()}{GetData()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_a4bdb165fcc99a9736533cecc07a73c49} 
+uint8\+\_\+t \texorpdfstring{$\ast$}{*} Roar\+::\+Net\+Buffer\+::\+Get\+Data (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_a999edd107a94eb32e6b775f0df3cda04}\index{Roar::NetBuffer@{Roar::NetBuffer}!GetReadPos@{GetReadPos}}
+\index{GetReadPos@{GetReadPos}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{GetReadPos()}{GetReadPos()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_a999edd107a94eb32e6b775f0df3cda04} 
+size\+\_\+t Roar\+::\+Net\+Buffer\+::\+Get\+Read\+Pos (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_ae0bbf990a082bc89d84f3dff1d1b8a52}\index{Roar::NetBuffer@{Roar::NetBuffer}!GetSize@{GetSize}}
+\index{GetSize@{GetSize}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{GetSize()}{GetSize()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_ae0bbf990a082bc89d84f3dff1d1b8a52} 
+size\+\_\+t Roar\+::\+Net\+Buffer\+::\+Get\+Size (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_aecd41bb83da49e5f6b31f663e12414e7}\index{Roar::NetBuffer@{Roar::NetBuffer}!LoadData@{LoadData}}
+\index{LoadData@{LoadData}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{LoadData()}{LoadData()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_aecd41bb83da49e5f6b31f663e12414e7} 
+void Roar\+::\+Net\+Buffer\+::\+Load\+Data (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{size\+\_\+t}]{size}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_a88dbe05dd0ed88e65cf8aac4c9343864}\index{Roar::NetBuffer@{Roar::NetBuffer}!ReadBytes@{ReadBytes}}
+\index{ReadBytes@{ReadBytes}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{ReadBytes()}{ReadBytes()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_a88dbe05dd0ed88e65cf8aac4c9343864} 
+void Roar\+::\+Net\+Buffer\+::\+Read\+Bytes (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{dest}{, }\item[{size\+\_\+t}]{length}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_ac3965c339583fee2600975a0c41d1263}\index{Roar::NetBuffer@{Roar::NetBuffer}!ReadFloat@{ReadFloat}}
+\index{ReadFloat@{ReadFloat}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{ReadFloat()}{ReadFloat()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_ac3965c339583fee2600975a0c41d1263} 
+float Roar\+::\+Net\+Buffer\+::\+Read\+Float (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_ae078ffd7a7c6520a61ce67d8d80dce1e}\index{Roar::NetBuffer@{Roar::NetBuffer}!ReadInt32@{ReadInt32}}
+\index{ReadInt32@{ReadInt32}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{ReadInt32()}{ReadInt32()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_ae078ffd7a7c6520a61ce67d8d80dce1e} 
+int32\+\_\+t Roar\+::\+Net\+Buffer\+::\+Read\+Int32 (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_a9d73a66a29aae6f04333c5837ef3acab}\index{Roar::NetBuffer@{Roar::NetBuffer}!ReadUInt16@{ReadUInt16}}
+\index{ReadUInt16@{ReadUInt16}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{ReadUInt16()}{ReadUInt16()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_a9d73a66a29aae6f04333c5837ef3acab} 
+uint16\+\_\+t Roar\+::\+Net\+Buffer\+::\+Read\+UInt16 (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_a478f777a80c576b5c73b1e8340a8935c}\index{Roar::NetBuffer@{Roar::NetBuffer}!ReadUInt32@{ReadUInt32}}
+\index{ReadUInt32@{ReadUInt32}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{ReadUInt32()}{ReadUInt32()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_a478f777a80c576b5c73b1e8340a8935c} 
+uint32\+\_\+t Roar\+::\+Net\+Buffer\+::\+Read\+UInt32 (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_af2f663b29726a8db73008c6c9f0e0fa7}\index{Roar::NetBuffer@{Roar::NetBuffer}!ReadUInt8@{ReadUInt8}}
+\index{ReadUInt8@{ReadUInt8}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{ReadUInt8()}{ReadUInt8()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_af2f663b29726a8db73008c6c9f0e0fa7} 
+uint8\+\_\+t Roar\+::\+Net\+Buffer\+::\+Read\+UInt8 (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_ac1aefad480b956c9fc58575182039b98}\index{Roar::NetBuffer@{Roar::NetBuffer}!ResetRead@{ResetRead}}
+\index{ResetRead@{ResetRead}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{ResetRead()}{ResetRead()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_ac1aefad480b956c9fc58575182039b98} 
+void Roar\+::\+Net\+Buffer\+::\+Reset\+Read (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_a894bd937f225ce35b9e91c7ea4db1f68}\index{Roar::NetBuffer@{Roar::NetBuffer}!WriteBytes@{WriteBytes}}
+\index{WriteBytes@{WriteBytes}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{WriteBytes()}{WriteBytes()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_a894bd937f225ce35b9e91c7ea4db1f68} 
+void Roar\+::\+Net\+Buffer\+::\+Write\+Bytes (\begin{DoxyParamCaption}\item[{const void \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{size\+\_\+t}]{length}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_a87012cbbefe60ae81ec6f71c6e5d3e96}\index{Roar::NetBuffer@{Roar::NetBuffer}!WriteFloat@{WriteFloat}}
+\index{WriteFloat@{WriteFloat}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{WriteFloat()}{WriteFloat()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_a87012cbbefe60ae81ec6f71c6e5d3e96} 
+void Roar\+::\+Net\+Buffer\+::\+Write\+Float (\begin{DoxyParamCaption}\item[{float}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_aa7ea3e8fcc8e9d3a515e3779cc0a139c}\index{Roar::NetBuffer@{Roar::NetBuffer}!WriteInt32@{WriteInt32}}
+\index{WriteInt32@{WriteInt32}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{WriteInt32()}{WriteInt32()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_aa7ea3e8fcc8e9d3a515e3779cc0a139c} 
+void Roar\+::\+Net\+Buffer\+::\+Write\+Int32 (\begin{DoxyParamCaption}\item[{int32\+\_\+t}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_a00d4052b1743493551d544fdf2e9b2aa}\index{Roar::NetBuffer@{Roar::NetBuffer}!WriteUInt16@{WriteUInt16}}
+\index{WriteUInt16@{WriteUInt16}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{WriteUInt16()}{WriteUInt16()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_a00d4052b1743493551d544fdf2e9b2aa} 
+void Roar\+::\+Net\+Buffer\+::\+Write\+UInt16 (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_a16149fbf652979efaaf70980af466d2f}\index{Roar::NetBuffer@{Roar::NetBuffer}!WriteUInt32@{WriteUInt32}}
+\index{WriteUInt32@{WriteUInt32}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{WriteUInt32()}{WriteUInt32()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_a16149fbf652979efaaf70980af466d2f} 
+void Roar\+::\+Net\+Buffer\+::\+Write\+UInt32 (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+\Hypertarget{classRoar_1_1NetBuffer_a78e359ef015ccfde12aa586350cfdcae}\index{Roar::NetBuffer@{Roar::NetBuffer}!WriteUInt8@{WriteUInt8}}
+\index{WriteUInt8@{WriteUInt8}!Roar::NetBuffer@{Roar::NetBuffer}}
+\doxysubsubsection{\texorpdfstring{WriteUInt8()}{WriteUInt8()}}
+{\footnotesize\ttfamily \label{classRoar_1_1NetBuffer_a78e359ef015ccfde12aa586350cfdcae} 
+void Roar\+::\+Net\+Buffer\+::\+Write\+UInt8 (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classRoar_1_1INetBuffer}{Roar\+::\+INet\+Buffer}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/Networking.\+h\end{DoxyCompactItemize}

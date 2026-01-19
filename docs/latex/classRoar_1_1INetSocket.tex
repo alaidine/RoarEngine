@@ -1,0 +1,34 @@
+\doxysection{Roar\+::INet\+Socket Class Reference}
+\hypertarget{classRoar_1_1INetSocket}{}\label{classRoar_1_1INetSocket}\index{Roar::INetSocket@{Roar::INetSocket}}
+Inheritance diagram for Roar\+::INet\+Socket\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classRoar_1_1INetSocket}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classRoar_1_1INetSocket_aacb0cecd86f2cb3b08120ff2d2c91b5d}\label{classRoar_1_1INetSocket_aacb0cecd86f2cb3b08120ff2d2c91b5d} 
+virtual bool {\bfseries Bind} (uint16\+\_\+t port)=0
+\item 
+\Hypertarget{classRoar_1_1INetSocket_a90a5332d37731090780024d718f53476}\label{classRoar_1_1INetSocket_a90a5332d37731090780024d718f53476} 
+virtual bool {\bfseries Send\+To} (const \mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&buffer, const sockaddr\+\_\+in \&dest)=0
+\item 
+\Hypertarget{classRoar_1_1INetSocket_ade8841fddf2e6dcf84c31a775a70db2e}\label{classRoar_1_1INetSocket_ade8841fddf2e6dcf84c31a775a70db2e} 
+virtual bool {\bfseries Send\+To} (const \mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&buffer, const char \texorpdfstring{$\ast$}{*}ip, uint16\+\_\+t port)=0
+\item 
+\Hypertarget{classRoar_1_1INetSocket_a61b974391ea446c5cc1a3a33311dcc2e}\label{classRoar_1_1INetSocket_a61b974391ea446c5cc1a3a33311dcc2e} 
+virtual int {\bfseries Receive\+From} (\mbox{\hyperlink{classRoar_1_1INetBuffer}{INet\+Buffer}} \&buffer, sockaddr\+\_\+in \&from)=0
+\item 
+\Hypertarget{classRoar_1_1INetSocket_a51c62492ef66a822993482ac4c29dfc4}\label{classRoar_1_1INetSocket_a51c62492ef66a822993482ac4c29dfc4} 
+virtual SOCKET\+\_\+\+TYPE {\bfseries Get\+Fd} () const =0
+\item 
+\Hypertarget{classRoar_1_1INetSocket_ac25e99a37e116af65bcf2501cbb7d1ea}\label{classRoar_1_1INetSocket_ac25e99a37e116af65bcf2501cbb7d1ea} 
+virtual bool {\bfseries Is\+Bound} () const =0
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/INetwork.\+h\end{DoxyCompactItemize}

@@ -1,0 +1,23 @@
+\doxysection{Physic\+Core.\+h}
+\hypertarget{PhysicCore_8h_source}{}\label{PhysicCore_8h_source}\index{include/PhysicCore.h@{include/PhysicCore.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\ \ \ \ \#include\ "{}Scene.h"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\ \ \ \ \#include\ "{}CollisionSystem.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\ \ \ \ \#include\ "{}VelocitySystem.h"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{class\ }PyhsicEngine\ \{}
+\DoxyCodeLine{00007\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00008\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classCollisionSystem}{CollisionSystem}}\&\ \_collisionSystem;}
+\DoxyCodeLine{00009\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classVelocitySystem}{VelocitySystem}}\&\ \_velocitySystem;}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ \ PyhsicEngine(\mbox{\hyperlink{classCollisionSystem}{CollisionSystem}}\&\ collisionSystem,\ \mbox{\hyperlink{classVelocitySystem}{VelocitySystem}}\&\ velocitySystem)}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \ \ \ \ :\ \_collisionSystem(collisionSystem),\ \_velocitySystem(velocitySystem)\ \{\}}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ updateAll()\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \ \ \ \ \_velocitySystem.Update();}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \ \ \ \ \_collisionSystem.Update();}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00017\ \};}
+
+\end{DoxyCode}

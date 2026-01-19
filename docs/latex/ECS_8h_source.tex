@@ -1,0 +1,400 @@
+\doxysection{ECS.\+h}
+\hypertarget{ECS_8h_source}{}\label{ECS_8h_source}\index{include/ECS.h@{include/ECS.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <array>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <bitset>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <cassert>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <queue>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <set>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <unordered\_map>}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{using\ }Entity\ =\ std::uint32\_t;}
+\DoxyCodeLine{00013\ \textcolor{keyword}{const}\ Entity\ MAX\_ENTITIES\ =\ 5000;}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{keyword}{using\ }ComponentType\ =\ std::uint8\_t;}
+\DoxyCodeLine{00016\ \textcolor{keyword}{const}\ ComponentType\ MAX\_COMPONENTS\ =\ 32;}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{using\ }Signature\ =\ std::bitset<MAX\_COMPONENTS>;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{class\ }EntityManager\ \{}
+\DoxyCodeLine{00021\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00022\ \ \ \ \ EntityManager()\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Initialize\ the\ queue\ with\ all\ possible\ entity\ IDs}}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (Entity\ entity\ =\ 0;\ entity\ <\ MAX\_ENTITIES;\ ++entity)\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ mAvailableEntities.push(entity);}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00027\ \ \ \ \ \}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ Entity\ CreateEntity()\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ assert(mLivingEntityCount\ <\ MAX\_ENTITIES\ \&\&\ \textcolor{stringliteral}{"{}Too\ many\ entities\ in\ existence."{}});}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Take\ an\ ID\ from\ the\ front\ of\ the\ queue}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ Entity\ \textcolor{keywordtype}{id}\ =\ mAvailableEntities.front();}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ mAvailableEntities.pop();}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ ++mLivingEntityCount;}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ id;}
+\DoxyCodeLine{00038\ \ \ \ \ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ Entity\ CreateEntity(std::string\ name)\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ assert(mLivingEntityCount\ <\ MAX\_ENTITIES\ \&\&\ \textcolor{stringliteral}{"{}Too\ many\ entities\ in\ existence."{}});}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Take\ an\ ID\ from\ the\ front\ of\ the\ queue}}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ Entity\ \textcolor{keywordtype}{id}\ =\ mAvailableEntities.front();}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ mAvailableEntities.pop();}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ ++mLivingEntityCount;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ mEntityToNameMap[id]\ =\ name;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ mNameToEntityMap[name]\ =\ id;}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ id;}
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{void}\ DestroyEntity(Entity\ entity)\ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ assert(entity\ <\ MAX\_ENTITIES\ \&\&\ \textcolor{stringliteral}{"{}Entity\ out\ of\ range."{}});}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Invalidate\ the\ destroyed\ entity's\ signature}}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ mSignatures[entity].reset();}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Put\ the\ destroyed\ ID\ at\ the\ back\ of\ the\ queue}}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ mAvailableEntities.push(entity);}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ -\/-\/mLivingEntityCount;}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{void}\ SetSignature(Entity\ entity,\ Signature\ signature)\ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ assert(entity\ <\ MAX\_ENTITIES\ \&\&\ \textcolor{stringliteral}{"{}Entity\ out\ of\ range."{}});}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Put\ this\ entity's\ signature\ into\ the\ array}}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ mSignatures[entity]\ =\ signature;}
+\DoxyCodeLine{00067\ \ \ \ \ \}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ Signature\ GetSignature(Entity\ entity)\ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ assert(entity\ <\ MAX\_ENTITIES\ \&\&\ \textcolor{stringliteral}{"{}Entity\ out\ of\ range."{}});}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ this\ entity's\ signature\ from\ the\ array}}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ mSignatures[entity];}
+\DoxyCodeLine{00073\ \ \ \ \ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{void}\ Clear()\ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Reset\ the\ queue\ of\ available\ IDs}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ mAvailableEntities\ =\ \{\};\ \textcolor{comment}{//\ Clear\ current\ queue}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (Entity\ entity\ =\ 0;\ entity\ <\ MAX\_ENTITIES;\ ++entity)\ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ mAvailableEntities.push(entity);}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Reset\ tracking\ data}}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ mSignatures.fill(Signature(0));}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ mLivingEntityCount\ =\ 0;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ mEntityToNameMap.clear();}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ mNameToEntityMap.clear();}
+\DoxyCodeLine{00087\ \ \ \ \ \}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{comment}{//\ Queue\ of\ unused\ entity\ IDs}}
+\DoxyCodeLine{00091\ \ \ \ \ std::queue<Entity>\ mAvailableEntities\{\};}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{comment}{//\ Array\ of\ signatures\ where\ the\ index\ corresponds\ to\ the\ entity\ ID}}
+\DoxyCodeLine{00093\ \ \ \ \ std::array<Signature,\ MAX\_ENTITIES>\ mSignatures\{\};}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{comment}{//\ Total\ living\ entities\ -\/\ used\ to\ keep\ limits\ on\ how\ many\ exist}}
+\DoxyCodeLine{00095\ \ \ \ \ uint32\_t\ mLivingEntityCount\{\};}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{comment}{//\ Map\ from\ an\ entity\ ID\ to\ name.}}
+\DoxyCodeLine{00097\ \ \ \ \ std::unordered\_map<Entity,\ std::string>\ mEntityToNameMap;}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{comment}{//\ Map\ from\ an\ name\ to\ an\ entity\ ID\ index.}}
+\DoxyCodeLine{00099\ \ \ \ \ std::unordered\_map<std::string,\ Entity>\ mNameToEntityMap;}
+\DoxyCodeLine{00100\ \};}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{comment}{//\ The\ one\ instance\ of\ virtual\ inheritance\ in\ the\ entire\ implementation.}}
+\DoxyCodeLine{00103\ \textcolor{comment}{//\ An\ interface\ is\ needed\ so\ that\ the\ ComponentManager\ (seen\ later)}}
+\DoxyCodeLine{00104\ \textcolor{comment}{//\ can\ tell\ a\ generic\ ComponentArray\ that\ an\ entity\ has\ been\ destroyed}}
+\DoxyCodeLine{00105\ \textcolor{comment}{//\ and\ that\ it\ needs\ to\ update\ its\ array\ mappings.}}
+\DoxyCodeLine{00106\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classIComponentArray}{IComponentArray}}\ \{}
+\DoxyCodeLine{00107\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classIComponentArray}{\string~IComponentArray}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ EntityDestroyed(Entity\ entity)\ =\ 0;}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ Clear()\ =\ 0;}
+\DoxyCodeLine{00111\ \};}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classComponentArray}{ComponentArray}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classIComponentArray}{IComponentArray}}\ \{}
+\DoxyCodeLine{00114\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{void}\ InsertData(Entity\ entity,\ T\ component)\ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ assert(mEntityToIndexMap.find(entity)\ ==\ mEntityToIndexMap.end()\ \&\&\ \textcolor{stringliteral}{"{}Component\ added\ to\ same\ entity\ more\ than\ once."{}});}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Put\ new\ entry\ at\ end\ and\ update\ the\ maps}}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ newIndex\ =\ mSize;}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ mEntityToIndexMap[entity]\ =\ newIndex;}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ mIndexToEntityMap[newIndex]\ =\ entity;}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ mComponentArray[newIndex]\ =\ component;}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ ++mSize;}
+\DoxyCodeLine{00124\ \ \ \ \ \}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{void}\ RemoveData(Entity\ entity)\ \{}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ assert(mEntityToIndexMap.find(entity)\ !=\ mEntityToIndexMap.end()\ \&\&\ \textcolor{stringliteral}{"{}Removing\ non-\/existent\ component."{}});}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Copy\ element\ at\ end\ into\ deleted\ element's\ place\ to\ maintain\ density}}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ indexOfRemovedEntity\ =\ mEntityToIndexMap[entity];}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ indexOfLastElement\ =\ mSize\ -\/\ 1;}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ mComponentArray[indexOfRemovedEntity]\ =\ mComponentArray[indexOfLastElement];}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ map\ to\ point\ to\ moved\ spot}}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ Entity\ entityOfLastElement\ =\ mIndexToEntityMap[indexOfLastElement];}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ mEntityToIndexMap[entityOfLastElement]\ =\ indexOfRemovedEntity;}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ mIndexToEntityMap[indexOfRemovedEntity]\ =\ entityOfLastElement;}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ mEntityToIndexMap.erase(entity);}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ mIndexToEntityMap.erase(indexOfLastElement);}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ -\/-\/mSize;}
+\DoxyCodeLine{00143\ \ \ \ \ \}}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \ \ \ \ T\ \&GetData(Entity\ entity)\ \{}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ assert(mEntityToIndexMap.find(entity)\ !=\ mEntityToIndexMap.end()\ \&\&\ \textcolor{stringliteral}{"{}Retrieving\ non-\/existent\ component."{}});}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Return\ a\ reference\ to\ the\ entity's\ component}}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ mComponentArray[mEntityToIndexMap[entity]];}
+\DoxyCodeLine{00150\ \ \ \ \ \}}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordtype}{void}\ EntityDestroyed(Entity\ entity)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (mEntityToIndexMap.find(entity)\ !=\ mEntityToIndexMap.end())\ \{}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Remove\ the\ entity's\ component\ if\ it\ existed}}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ RemoveData(entity);}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00157\ \ \ \ \ \}}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keywordtype}{void}\ Clear()\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ mEntityToIndexMap.clear();}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ mIndexToEntityMap.clear();}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ mSize\ =\ 0;}
+\DoxyCodeLine{00163\ \ \ \ \ \}}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{comment}{//\ The\ packed\ array\ of\ components\ (of\ generic\ type\ T),}}
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{comment}{//\ set\ to\ a\ specified\ maximum\ amount,\ matching\ the\ maximum\ number}}
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{comment}{//\ of\ entities\ allowed\ to\ exist\ simultaneously,\ so\ that\ each\ entity}}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{comment}{//\ has\ a\ unique\ spot.}}
+\DoxyCodeLine{00170\ \ \ \ \ std::array<T,\ MAX\_ENTITIES>\ mComponentArray;}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{comment}{//\ Map\ from\ an\ entity\ ID\ to\ an\ array\ index.}}
+\DoxyCodeLine{00173\ \ \ \ \ std::unordered\_map<Entity,\ size\_t>\ mEntityToIndexMap;}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{comment}{//\ Map\ from\ an\ array\ index\ to\ an\ entity\ ID.}}
+\DoxyCodeLine{00176\ \ \ \ \ std::unordered\_map<size\_t,\ Entity>\ mIndexToEntityMap;}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{comment}{//\ Total\ size\ of\ valid\ entries\ in\ the\ array.}}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ mSize;}
+\DoxyCodeLine{00180\ \};}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classComponentManager}{ComponentManager}}\ \{}
+\DoxyCodeLine{00183\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keywordtype}{void}\ RegisterComponent()\ \{}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *typeName\ =\ \textcolor{keyword}{typeid}(T).name();}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ assert(mComponentTypes.find(typeName)\ ==\ mComponentTypes.end()\ \&\&\ \textcolor{stringliteral}{"{}Registering\ component\ type\ more\ than\ once."{}});}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Add\ this\ component\ type\ to\ the\ component\ type\ map}}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ mComponentTypes.insert(\{typeName,\ mNextComponentType\});}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Create\ a\ ComponentArray\ pointer\ and\ add\ it\ to\ the\ component\ arrays\ map}}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ mComponentArrays.insert(\{typeName,\ std::make\_shared<ComponentArray<T>>()\});}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Increment\ the\ value\ so\ that\ the\ next\ component\ registered\ will\ be\ different}}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ ++mNextComponentType;}
+\DoxyCodeLine{00197\ \ \ \ \ \}}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ ComponentType\ GetComponentType()\ \{}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *typeName\ =\ \textcolor{keyword}{typeid}(T).name();}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ assert(mComponentTypes.find(typeName)\ !=\ mComponentTypes.end()\ \&\&\ \textcolor{stringliteral}{"{}Component\ not\ registered\ before\ use."{}});}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Return\ this\ component's\ type\ -\/\ used\ for\ creating\ signatures}}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ mComponentTypes[typeName];}
+\DoxyCodeLine{00206\ \ \ \ \ \}}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keywordtype}{void}\ AddComponent(Entity\ entity,\ T\ component)\ \{}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Add\ a\ component\ to\ the\ array\ for\ an\ entity}}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ GetComponentArray<T>()-\/>InsertData(entity,\ component);}
+\DoxyCodeLine{00211\ \ \ \ \ \}}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keywordtype}{void}\ RemoveComponent(Entity\ entity)\ \{}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Remove\ a\ component\ from\ the\ array\ for\ an\ entity}}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ GetComponentArray<T>()-\/>RemoveData(entity);}
+\DoxyCodeLine{00216\ \ \ \ \ \}}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ T\ \&GetComponent(Entity\ entity)\ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ a\ reference\ to\ a\ component\ from\ the\ array\ for\ an\ entity}}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ GetComponentArray<T>()-\/>GetData(entity);}
+\DoxyCodeLine{00221\ \ \ \ \ \}}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{keywordtype}{void}\ EntityDestroyed(Entity\ entity)\ \{}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Notify\ each\ component\ array\ that\ an\ entity\ has\ been\ destroyed}}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ it\ has\ a\ component\ for\ that\ entity,\ it\ will\ remove\ it}}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ \&pair\ :\ mComponentArrays)\ \{}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ \&component\ =\ pair.second;}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ component-\/>EntityDestroyed(entity);}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00231\ \ \ \ \ \}}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \ \ \ \ \textcolor{keywordtype}{void}\ Clear()\ \{}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ \&pair\ :\ mComponentArrays)\ \{}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ \&component\ =\ pair.second;}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ component-\/>Clear();}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00238\ \ \ \ \ \}}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{comment}{//\ Map\ from\ type\ string\ pointer\ to\ a\ component\ type}}
+\DoxyCodeLine{00242\ \ \ \ \ std::unordered\_map<const\ char\ *,\ ComponentType>\ mComponentTypes\{\};}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{comment}{//\ Map\ from\ type\ string\ pointer\ to\ a\ component\ array}}
+\DoxyCodeLine{00245\ \ \ \ \ std::unordered\_map<const\ char\ *,\ std::shared\_ptr<IComponentArray>>\ mComponentArrays\{\};}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ \ \ \textcolor{comment}{//\ The\ component\ type\ to\ be\ assigned\ to\ the\ next\ registered\ component\ -\/\ starting\ at\ 0}}
+\DoxyCodeLine{00248\ \ \ \ \ ComponentType\ mNextComponentType\{\};}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{comment}{//\ Convenience\ function\ to\ get\ the\ statically\ casted\ pointer\ to\ the\ ComponentArray\ of\ type\ T.}}
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ std::shared\_ptr<ComponentArray<T>>\ GetComponentArray()\ \{}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *typeName\ =\ \textcolor{keyword}{typeid}(T).name();}
+\DoxyCodeLine{00253\ }
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ assert(mComponentTypes.find(typeName)\ !=\ mComponentTypes.end()\ \&\&\ \textcolor{stringliteral}{"{}Component\ not\ registered\ before\ use."{}});}
+\DoxyCodeLine{00255\ }
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::static\_pointer\_cast<ComponentArray<T>>(mComponentArrays[typeName]);}
+\DoxyCodeLine{00257\ \ \ \ \ \}}
+\DoxyCodeLine{00258\ \};}
+\DoxyCodeLine{00259\ }
+\DoxyCodeLine{00260\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classSystem}{System}}\ \{}
+\DoxyCodeLine{00261\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00262\ \ \ \ \ std::set<Entity>\ mEntities;}
+\DoxyCodeLine{00263\ \};}
+\DoxyCodeLine{00264\ }
+\DoxyCodeLine{00265\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classSystemManager}{SystemManager}}\ \{}
+\DoxyCodeLine{00266\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00267\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ std::shared\_ptr<T>\ RegisterSystem()\ \{}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *typeName\ =\ \textcolor{keyword}{typeid}(T).name();}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ assert(mSystems.find(typeName)\ ==\ mSystems.end()\ \&\&\ \textcolor{stringliteral}{"{}Registering\ system\ more\ than\ once."{}});}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Create\ a\ pointer\ to\ the\ system\ and\ return\ it\ so\ it\ can\ be\ used\ externally}}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ system\ =\ std::make\_shared<T>();}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ mSystems.insert(\{typeName,\ system\});}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ system;}
+\DoxyCodeLine{00276\ \ \ \ \ \}}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00278\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keywordtype}{void}\ SetSignature(Signature\ signature)\ \{}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *typeName\ =\ \textcolor{keyword}{typeid}(T).name();}
+\DoxyCodeLine{00280\ }
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ assert(mSystems.find(typeName)\ !=\ mSystems.end()\ \&\&\ \textcolor{stringliteral}{"{}System\ used\ before\ registered."{}});}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Set\ the\ signature\ for\ this\ system}}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ mSignatures.insert(\{typeName,\ signature\});}
+\DoxyCodeLine{00285\ \ \ \ \ \}}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00287\ \ \ \ \ \textcolor{keywordtype}{void}\ EntityDestroyed(Entity\ entity)\ \{}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Erase\ a\ destroyed\ entity\ from\ all\ system\ lists}}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ mEntities\ is\ a\ set\ so\ no\ check\ needed}}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ \&pair\ :\ mSystems)\ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ \&system\ =\ pair.second;}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ system-\/>mEntities.erase(entity);}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00295\ \ \ \ \ \}}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \ \ \ \ \textcolor{keywordtype}{void}\ EntitySignatureChanged(Entity\ entity,\ Signature\ entitySignature)\ \{}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Notify\ each\ system\ that\ an\ entity's\ signature\ changed}}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ \&pair\ :\ mSystems)\ \{}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ \&type\ =\ pair.first;}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ \&system\ =\ pair.second;}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ \&systemSignature\ =\ mSignatures[type];}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Entity\ signature\ matches\ system\ signature\ -\/\ insert\ into\ set}}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((entitySignature\ \&\ systemSignature)\ ==\ systemSignature)\ \{}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ system-\/>mEntities.insert(entity);}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Entity\ signature\ does\ not\ match\ system\ signature\ -\/\ erase\ from\ set}}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ system-\/>mEntities.erase(entity);}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00313\ \ \ \ \ \}}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00315\ \ \ \ \ \textcolor{keywordtype}{void}\ Clear()\ \{}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ \&pair\ :\ mSystems)\ \{}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \textcolor{keyword}{const}\ \&system\ =\ pair.second;}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \ \ \ \ system-\/>mEntities.clear();}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00320\ \ \ \ \ \}}
+\DoxyCodeLine{00321\ }
+\DoxyCodeLine{00322\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00323\ \ \ \ \ \textcolor{comment}{//\ Map\ from\ system\ type\ string\ pointer\ to\ a\ signature}}
+\DoxyCodeLine{00324\ \ \ \ \ std::unordered\_map<const\ char\ *,\ Signature>\ mSignatures\{\};}
+\DoxyCodeLine{00325\ }
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{comment}{//\ Map\ from\ system\ type\ string\ pointer\ to\ a\ system\ pointer}}
+\DoxyCodeLine{00327\ \ \ \ \ std::unordered\_map<const\ char\ *,\ std::shared\_ptr<System>>\ mSystems\{\};}
+\DoxyCodeLine{00328\ \};}
+\DoxyCodeLine{00329\ }
+\DoxyCodeLine{00330\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classScene}{Scene}}\ \{}
+\DoxyCodeLine{00331\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00332\ \ \ \ \ \textcolor{keywordtype}{void}\ Init()\ \{}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Create\ pointers\ to\ each\ manager}}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ mComponentManager\ =\ std::make\_unique<ComponentManager>();}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ mEntityManager\ =\ std::make\_unique<EntityManager>();}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ mSystemManager\ =\ std::make\_unique<SystemManager>();}
+\DoxyCodeLine{00337\ \ \ \ \ \}}
+\DoxyCodeLine{00338\ }
+\DoxyCodeLine{00339\ \ \ \ \ \textcolor{comment}{//\ Entity\ methods}}
+\DoxyCodeLine{00340\ \ \ \ \ Entity\ CreateEntity()\ \{\ \textcolor{keywordflow}{return}\ mEntityManager-\/>CreateEntity();\ \}}
+\DoxyCodeLine{00341\ \ \ \ \ }
+\DoxyCodeLine{00342\ \ \ \ \ Entity\ CreateEntity(std::string\ name)\ \{\ \textcolor{keywordflow}{return}\ mEntityManager-\/>CreateEntity(name);\ \}}
+\DoxyCodeLine{00343\ }
+\DoxyCodeLine{00344\ \ \ \ \ \textcolor{keywordtype}{void}\ DestroyEntity(Entity\ entity)\ \{}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ mEntityManager-\/>DestroyEntity(entity);}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ mComponentManager-\/>EntityDestroyed(entity);}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ mSystemManager-\/>EntityDestroyed(entity);}
+\DoxyCodeLine{00348\ \ \ \ \ \}}
+\DoxyCodeLine{00349\ }
+\DoxyCodeLine{00350\ \ \ \ \ Signature\ EntityGetSignature(Entity\ entity)\ \{\ \textcolor{keywordflow}{return}\ mEntityManager-\/>GetSignature(entity);\ \}}
+\DoxyCodeLine{00351\ }
+\DoxyCodeLine{00352\ \ \ \ \ \textcolor{comment}{//\ Component\ methods}}
+\DoxyCodeLine{00353\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keywordtype}{void}\ RegisterComponent()\ \{\ mComponentManager-\/>RegisterComponent<T>();\ \}}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00355\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keywordtype}{void}\ AddComponent(Entity\ entity,\ T\ component)\ \{}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ mComponentManager-\/>AddComponent<T>(entity,\ component);}
+\DoxyCodeLine{00357\ }
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ signature\ =\ mEntityManager-\/>GetSignature(entity);}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ signature.set(mComponentManager-\/>GetComponentType<T>(),\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ mEntityManager-\/>SetSignature(entity,\ signature);}
+\DoxyCodeLine{00361\ }
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ mSystemManager-\/>EntitySignatureChanged(entity,\ signature);}
+\DoxyCodeLine{00363\ \ \ \ \ \}}
+\DoxyCodeLine{00364\ }
+\DoxyCodeLine{00365\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keywordtype}{void}\ RemoveComponent(Entity\ entity)\ \{}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ mComponentManager-\/>RemoveComponent<T>(entity);}
+\DoxyCodeLine{00367\ }
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ signature\ =\ mEntityManager-\/>GetSignature(entity);}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ signature.set(mComponentManager-\/>GetComponentType<T>(),\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ mEntityManager-\/>SetSignature(entity,\ signature);}
+\DoxyCodeLine{00371\ }
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ mSystemManager-\/>EntitySignatureChanged(entity,\ signature);}
+\DoxyCodeLine{00373\ \ \ \ \ \}}
+\DoxyCodeLine{00374\ }
+\DoxyCodeLine{00375\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ T\ \&GetComponent(Entity\ entity)\ \{\ \textcolor{keywordflow}{return}\ mComponentManager-\/>GetComponent<T>(entity);\ \}}
+\DoxyCodeLine{00376\ }
+\DoxyCodeLine{00377\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ ComponentType\ GetComponentType()\ \{\ \textcolor{keywordflow}{return}\ mComponentManager-\/>GetComponentType<T>();\ \}}
+\DoxyCodeLine{00378\ }
+\DoxyCodeLine{00379\ \ \ \ \ \textcolor{comment}{//\ System\ methods}}
+\DoxyCodeLine{00380\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ std::shared\_ptr<T>\ RegisterSystem()\ \{\ \textcolor{keywordflow}{return}\ mSystemManager-\/>RegisterSystem<T>();\ \}}
+\DoxyCodeLine{00381\ }
+\DoxyCodeLine{00382\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keywordtype}{void}\ SetSystemSignature(Signature\ signature)\ \{\ mSystemManager-\/>SetSignature<T>(signature);\ \}}
+\DoxyCodeLine{00383\ }
+\DoxyCodeLine{00384\ \ \ \ \ \textcolor{keywordtype}{void}\ Clear()\ \{}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ mComponentManager-\/>Clear();}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ mSystemManager-\/>Clear();}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ mEntityManager-\/>Clear();}
+\DoxyCodeLine{00388\ \ \ \ \ \}}
+\DoxyCodeLine{00389\ }
+\DoxyCodeLine{00390\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00391\ \ \ \ \ std::unique\_ptr<ComponentManager>\ mComponentManager;}
+\DoxyCodeLine{00392\ \ \ \ \ std::unique\_ptr<EntityManager>\ mEntityManager;}
+\DoxyCodeLine{00393\ \ \ \ \ std::unique\_ptr<SystemManager>\ mSystemManager;}
+\DoxyCodeLine{00394\ \};}
+
+\end{DoxyCode}

@@ -1,0 +1,48 @@
+\doxysection{Missile\+System.\+h}
+\hypertarget{MissileSystem_8h_source}{}\label{MissileSystem_8h_source}\index{include/MissileSystem.h@{include/MissileSystem.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\ \ \ \ \#include\ "{}Scene.h"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\ \ \ \ \#include\ "{}System.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\ \ \ \ \#define\ TARGET\_FPS\ 100}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\ \ \ \ \#define\ GAME\_WIDTH\ 800}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{extern}\ \mbox{\hyperlink{classScene}{Scene}}\ \_core;}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keywordtype}{void}\ AnimMissile(\mbox{\hyperlink{structPosition}{Position}}\&\ pos,\ \mbox{\hyperlink{structAnimationComponent}{AnimationComponent}}\&\ anim)\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ anim.\_frameCounter++;}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keywordflow}{if}\ (anim.\_frameCounter\ >=\ (TARGET\_FPS\ /\ anim.\_frameSpeed))}
+\DoxyCodeLine{00013\ \ \ \ \ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ anim.\_frameCounter\ =\ 0;}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ anim.\_current\_frame++;}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (anim.\_current\_frame\ >\ 4)\ anim.\_current\_frame\ =\ 0;}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ anim.rect.x\ =\ anim.\_animationRectangle[anim.\_current\_frame].x;}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ anim.rect.y\ =\ anim.\_animationRectangle[anim.\_current\_frame].y;}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ anim.rect.height\ =\ anim.\_animationRectangle[anim.\_current\_frame].height;}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ anim.rect.width\ =\ anim.\_animationRectangle[anim.\_current\_frame].width;}
+\DoxyCodeLine{00021\ \ \ \ \ \}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ pos.position.x\ +=\ 5;}
+\DoxyCodeLine{00024\ \}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classMissileSystem}{MissileSystem}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classSystem}{System}}\ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Update()\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ entity:\ \_entities)\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\&\ pos\ =\ \_core.GetComponent<\mbox{\hyperlink{structPosition}{Position}}>(entity);}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\&\ anim\ =\ \_core.GetComponent<\mbox{\hyperlink{structAnimationComponent}{AnimationComponent}}>(entity);}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\&\ tag\ =\ \_core.GetComponent<\mbox{\hyperlink{structMissileTag}{MissileTag}}>(entity);}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AnimMissile(pos,\ anim);}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pos.position.x\ >\ GAME\_WIDTH)\ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Destroying\ missile\ at\ x="{}}\ <<\ pos.position.x\ <<\ std::endl;}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_core.DestroyEntity(entity);}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00042\ \};}
+
+\end{DoxyCode}

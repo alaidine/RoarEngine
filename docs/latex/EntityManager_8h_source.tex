@@ -1,0 +1,54 @@
+\doxysection{Entity\+Manager.\+h}
+\hypertarget{EntityManager_8h_source}{}\label{EntityManager_8h_source}\index{include/EntityManager.h@{include/EntityManager.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}Signature.h"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}Entity.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <array>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <cassert>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <queue>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classEntityManager}{EntityManager}}\ \{}
+\DoxyCodeLine{00009\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00010\ \ \ \ \ std::queue<Entity>\ \_entityAvailable\{\};}
+\DoxyCodeLine{00011\ \ \ \ \ std::array<Signature,\ MAX\_ENTITIES>\ \_signatures\{\};}
+\DoxyCodeLine{00012\ \ \ \ \ uint32\_t\ \_livingEntity\{\};}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00015\ \ \ \ \ EntityManager()\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (Entity\ entity\ =\ 0;\ entity\ <\ MAX\_ENTITIES;\ entity++)}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \ \ \ \ \_entityAvailable.push(entity);}
+\DoxyCodeLine{00018\ \ \ \ \ \}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \ \ Entity\ CreateEntity()\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ assert(\_livingEntity\ <\ MAX\_ENTITIES\ \&\&\ \textcolor{stringliteral}{"{}Too\ many\ entities\ in\ existence."{}});}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ Entity\ \textcolor{keywordtype}{id}\ =\ \_entityAvailable.front();}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \_entityAvailable.pop();}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \_livingEntity++;}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ id;}
+\DoxyCodeLine{00027\ \ \ \ \ \}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{void}\ DestroyEntity(Entity\ entity)\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ assert(entity\ <\ MAX\_ENTITIES\ \&\&\ \textcolor{stringliteral}{"{}Entity\ out\ of\ range."{}});}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \_signatures[entity].reset();}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \_entityAvailable.push(entity);}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \_livingEntity-\/-\/;}
+\DoxyCodeLine{00035\ \ \ \ \ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{void}\ SetSignature(Entity\ entity,\ Signature\ signature)\ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ assert(entity\ <\ MAX\_ENTITIES\ \&\&\ \textcolor{stringliteral}{"{}Entity\ out\ of\ range."{}});}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \_signatures[entity]\ =\ signature;}
+\DoxyCodeLine{00041\ \ \ \ \ \}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ Signature\ GetSignature(Entity\ entity)\ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ assert(entity\ <\ MAX\_ENTITIES\ \&\&\ \textcolor{stringliteral}{"{}Entity\ out\ of\ range."{}});}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_signatures[entity];}
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+\DoxyCodeLine{00048\ \};}
+
+\end{DoxyCode}

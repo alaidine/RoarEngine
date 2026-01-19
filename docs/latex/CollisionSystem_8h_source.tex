@@ -1,0 +1,64 @@
+\doxysection{Collision\+System.\+h}
+\hypertarget{CollisionSystem_8h_source}{}\label{CollisionSystem_8h_source}\index{include/CollisionSystem.h@{include/CollisionSystem.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}Scene.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}System.h"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}framework.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <raylib.h>}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{extern}\ \mbox{\hyperlink{classScene}{Scene}}\ \_core;}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keywordtype}{void}\ check\_map\_collision(\mbox{\hyperlink{structPosition}{Position}}\ \&pos,\ \mbox{\hyperlink{structCollider}{Collider}}\ \&collider)\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keywordtype}{float}\ screenW\ =\ (float)GetScreenWidth();}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keywordtype}{float}\ screenH\ =\ (float)GetScreenHeight();}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keywordflow}{if}\ (pos.position.x\ +\ collider.rect.width\ >=\ screenW)}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ pos.position.x\ =\ screenW\ -\/\ collider.rect.width;}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordflow}{if}\ (pos.position.x\ <=\ 0)}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ pos.position.x\ =\ 0;}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordflow}{if}\ (pos.position.y\ +\ collider.rect.height\ >=\ screenH)}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ pos.position.y\ =\ screenH\ -\/\ collider.rect.height;}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordflow}{if}\ (pos.position.y\ <=\ 0)}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ pos.position.y\ =\ 0;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ collider.rect.x\ =\ pos.position.x;}
+\DoxyCodeLine{00028\ \ \ \ \ collider.rect.y\ =\ pos.position.y;}
+\DoxyCodeLine{00029\ \}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{void}\ check\_enemy\_collision(Rectangle\ \&rectA,\ Rectangle\ \&rectB)\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{bool}\ collision;}
+\DoxyCodeLine{00033\ \ \ \ \ collision\ =\ CheckCollisionRecs(rectA,\ rectB);}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordflow}{if}\ (collision)\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}collision\ with\ enemy"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ collision\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00037\ \ \ \ \ \}}
+\DoxyCodeLine{00038\ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classCollisionSystem}{CollisionSystem}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classSystem}{System}}\ \{}
+\DoxyCodeLine{00041\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{void}\ Update()\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ collision;}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ Rectangle\ rectA;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ Rectangle\ rectB;}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \&entity\ :\ \_entities)\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \&pos\ =\ \_core.GetComponent<\mbox{\hyperlink{structPosition}{Position}}>(entity);}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \&collider\ =\ \_core.GetComponent<\mbox{\hyperlink{structCollider}{Collider}}>(entity);}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (collider.isPlayer)\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ check\_map\_collision(pos,\ collider);}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rectA\ =\ collider.rect;}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (!collider.isPlayer)}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rectB\ =\ collider.rect;}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ check\ enemy\ collision}}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ check\_enemy\_collision(rectA,\ rectB);}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00057\ \ \ \ \ \}}
+\DoxyCodeLine{00058\ \};}
+
+\end{DoxyCode}

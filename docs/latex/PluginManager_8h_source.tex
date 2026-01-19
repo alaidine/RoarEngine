@@ -1,0 +1,141 @@
+\doxysection{Plugin\+Manager.\+h}
+\hypertarget{PluginManager_8h_source}{}\label{PluginManager_8h_source}\index{include/PluginManager.h@{include/PluginManager.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}framework.h"{}}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}IPlugin.h"{}}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <filesystem>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <unordered\_map>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#if\ defined(\_WIN32)}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ \_WINSOCKAPI\_}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <windows.h>}}
+\DoxyCodeLine{00016\ \textcolor{keyword}{typedef}\ HMODULE\ LibraryHandle;}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <dlfcn.h>}}
+\DoxyCodeLine{00019\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{void}\ *LibraryHandle;}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <RoarEngine.h>}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#if\ defined(\_MSC\_VER)}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ PLUGIN\_EXPORT\ \_\_declspec(dllexport)}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#elif\ defined(\_\_GNUC\_\_)\ ||\ defined(\_\_clang\_\_)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ PLUGIN\_EXPORT\ \_\_attribute\_\_((visibility("{}default"{})))}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ PLUGIN\_EXPORT}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{namespace\ }Roar\ \{}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classRoar_1_1LibraryLoader}{LibraryLoader}}\ \{}
+\DoxyCodeLine{00034\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{static}\ LibraryHandle\ Load(\textcolor{keyword}{const}\ std::string\ \&path);}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ Unload(LibraryHandle\ handle);}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keyword}{static}\ T\ GetFunction(LibraryHandle\ handle,\ \textcolor{keyword}{const}\ std::string\ \&funcName);}
+\DoxyCodeLine{00038\ \};}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classRoar_1_1ITestPlugin}{ITestPlugin}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classRoar_1_1IPlugin}{IPlugin}}\ \{}
+\DoxyCodeLine{00041\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ OnLoad()\ =\ 0;}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ OnUnload()\ =\ 0;}
+\DoxyCodeLine{00044\ \};}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{classRoar_1_1IPlugin}{IPlugin}}\ *(*CreatePluginFunc)();}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classRoar_1_1PluginRegistry}{PluginRegistry}}\ \{}
+\DoxyCodeLine{00049\ \ \ \ \ std::unordered\_map<std::string,\ IPlugin\ *>\ m\_plugins;}
+\DoxyCodeLine{00050\ \ \ \ \ std::vector<LibraryHandle>\ m\_loadedLibraries;}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ LoadAll(\textcolor{keyword}{const}\ std::string\ \&directoryPath)\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keyword}{namespace\ }fs\ =\ std::filesystem;}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ \&entry\ :\ fs::directory\_iterator(directoryPath))\ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ for\ .dll\ or\ .so\ extension}}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (entry.path().extension()\ ==\ \textcolor{stringliteral}{"{}.dll"{}}\ ||\ entry.path().extension()\ ==\ \textcolor{stringliteral}{"{}.so"{}})\ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ LoadSingle(entry.path().string());}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00062\ \ \ \ \ \}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{void}\ LoadLibs(std::vector<std::string>\ names)\ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ \&entry\ :\ names)\ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ LoadSingle(entry);}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00068\ \ \ \ \ \}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{void}\ LoadSingle(\textcolor{keyword}{const}\ std::string\ \&path)\ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ LibraryHandle\ handle;}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#if\ defined(\_WIN32)}}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ handle\ =\ LibraryLoader::Load(path\ +\ \textcolor{stringliteral}{"{}.dll"{}});}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ handle\ =\ LibraryLoader::Load(path\ +\ \textcolor{stringliteral}{"{}.so"{}});}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!handle)}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ creator\ =\ LibraryLoader::GetFunction<CreatePluginFunc>(handle,\ \textcolor{stringliteral}{"{}CreatePlugin"{}});}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (creator)\ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ IPlugin\ *plugin\ =\ creator();}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ \textcolor{keywordtype}{id}\ =\ plugin-\/>GetID();}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_plugins.find(\textcolor{keywordtype}{id})\ ==\ m\_plugins.end())\ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_plugins[id]\ =\ plugin;}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_loadedLibraries.push\_back(handle);}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Registered\ Plugin:\ "{}}\ <<\ \textcolor{keywordtype}{id}\ <<\ std::endl;}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Conflict:\ Plugin\ "{}}\ <<\ \textcolor{keywordtype}{id}\ <<\ \textcolor{stringliteral}{"{}\ already\ loaded!"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00097\ \ \ \ \ \}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{comment}{//\ The\ user\ asks\ for\ a\ specific\ Interface\ (T)\ and\ the\ ID\ string}}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ T\ *GetSystem(\textcolor{keyword}{const}\ std::string\ \&\textcolor{keywordtype}{id})\ \{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ it\ =\ m\_plugins.find(\textcolor{keywordtype}{id});}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (it\ !=\ m\_plugins.end())\ \{}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Downcast\ the\ IPlugin*\ to\ the\ specific}}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ dynamic\_cast\ is\ safer\ but\ requires\ RTTI\ to\ work\ across\ DLLs\ (can\ be\ tricky)}}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ static\_cast\ is\ faster\ but\ assumes\ you\ know\ what\ you\ are\ doing.}}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}T\ *\textcolor{keyword}{>}(it-\/>second);}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00109\ \ \ \ \ \}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{void}\ Shutdown()\ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \&pair\ :\ m\_plugins)\ \{}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ pair.second;\ \textcolor{comment}{//\ Virtual\ destructor\ handles\ specific\ cleanup}}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ m\_plugins.clear();}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ handle\ :\ m\_loadedLibraries)\ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ LibraryLoader::Unload(handle);}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ m\_loadedLibraries.clear();}
+\DoxyCodeLine{00120\ \ \ \ \ \}}
+\DoxyCodeLine{00121\ \};}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \textcolor{keyword}{extern}\ std::vector<std::string>\ g\_Plugins;}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \mbox{\hyperlink{classRoar_1_1PluginRegistry}{PluginRegistry}}\ *GetRegistry();}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \textcolor{keyword}{namespace\ }PluginSystem\ \{}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \textcolor{keywordtype}{void}\ AddPlugin(std::string\ pluginName);}
+\DoxyCodeLine{00130\ \textcolor{keywordtype}{void}\ Startup();}
+\DoxyCodeLine{00131\ \textcolor{keywordtype}{void}\ Shutdown();}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \}\ \textcolor{comment}{//\ namespace\ PluginSystem}}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \}\ \textcolor{comment}{//\ namespace\ Roar}}
+
+\end{DoxyCode}

@@ -1,0 +1,320 @@
+\doxysection{Networking.\+h}
+\hypertarget{Networking_8h_source}{}\label{Networking_8h_source}\index{include/Networking.h@{include/Networking.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}framework.h"{}}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}INetwork.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}PluginManager.h"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#if\ defined(\_WIN32)}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#pragma\ comment(lib,\ "{}Ws2\_32.lib"{})}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#if\ defined(\_WIN32)}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <winsock2.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <ws2tcpip.h>}}
+\DoxyCodeLine{00015\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{int}\ socklen\_t;}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ CLOSE\_SOCKET(s)\ closesocket(s)}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ SOCKET\_TYPE\ SOCKET}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ INVALID\_SOCK\ INVALID\_SOCKET}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ <arpa/inet.h>}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <errno.h>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <fcntl.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <netinet/in.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <sys/socket.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <unistd.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ CLOSE\_SOCKET(s)\ close(s)}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ SOCKET\_TYPE\ int}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ INVALID\_SOCK\ (-\/1)}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ <cstdio>}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ <cstring>}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{keyword}{namespace\ }Roar\ \{}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{class\ }NetBuffer\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ \{}
+\DoxyCodeLine{00039\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00040\ \ \ \ \ uint8\_t\ *\_data;}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \_size;}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \_capacity;}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \_readPos;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00046\ \ \ \ \ NetBuffer(\textcolor{keywordtype}{size\_t}\ capacity\ =\ 4096)\ :\ \_size(0),\ \_capacity(capacity),\ \_readPos(0)\ \{\ \_data\ =\ \textcolor{keyword}{new}\ uint8\_t[capacity];\ \}}
+\DoxyCodeLine{00047\ \ \ \ \ \string~NetBuffer()\ \{\ \textcolor{keyword}{delete}[]\ \_data;\ \}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{comment}{//\ Write\ operations}}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{void}\ WriteUInt8(uint8\_t\ value)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_size\ +\ \textcolor{keyword}{sizeof}(uint8\_t)\ >\ \_capacity)}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \_data[\_size++]\ =\ value;}
+\DoxyCodeLine{00054\ \ \ \ \ \}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{void}\ WriteUInt16(uint16\_t\ value)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_size\ +\ \textcolor{keyword}{sizeof}(uint16\_t)\ >\ \_capacity)}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ memcpy(\_data\ +\ \_size,\ \&value,\ \textcolor{keyword}{sizeof}(uint16\_t));}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \_size\ +=\ \textcolor{keyword}{sizeof}(uint16\_t);}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{void}\ WriteUInt32(uint32\_t\ value)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_size\ +\ \textcolor{keyword}{sizeof}(uint32\_t)\ >\ \_capacity)}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ memcpy(\_data\ +\ \_size,\ \&value,\ \textcolor{keyword}{sizeof}(uint32\_t));}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \_size\ +=\ \textcolor{keyword}{sizeof}(uint32\_t);}
+\DoxyCodeLine{00068\ \ \ \ \ \}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{void}\ WriteInt32(int32\_t\ value)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_size\ +\ \textcolor{keyword}{sizeof}(int32\_t)\ >\ \_capacity)}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ memcpy(\_data\ +\ \_size,\ \&value,\ \textcolor{keyword}{sizeof}(int32\_t));}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \_size\ +=\ \textcolor{keyword}{sizeof}(int32\_t);}
+\DoxyCodeLine{00075\ \ \ \ \ \}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{void}\ WriteFloat(\textcolor{keywordtype}{float}\ value)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_size\ +\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{float})\ >\ \_capacity)}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ memcpy(\_data\ +\ \_size,\ \&value,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{float}));}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \_size\ +=\ \textcolor{keyword}{sizeof}(float);}
+\DoxyCodeLine{00082\ \ \ \ \ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{void}\ WriteBytes(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ length)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_size\ +\ length\ >\ \_capacity)}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ memcpy(\_data\ +\ \_size,\ data,\ length);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \_size\ +=\ length;}
+\DoxyCodeLine{00089\ \ \ \ \ \}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{comment}{//\ Read\ operations}}
+\DoxyCodeLine{00092\ \ \ \ \ uint8\_t\ ReadUInt8()\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_readPos\ +\ \textcolor{keyword}{sizeof}(uint8\_t)\ >\ \_size)}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_data[\_readPos++];}
+\DoxyCodeLine{00096\ \ \ \ \ \}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ uint16\_t\ ReadUInt16()\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_readPos\ +\ \textcolor{keyword}{sizeof}(uint16\_t)\ >\ \_size)}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ uint16\_t\ value;}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ memcpy(\&value,\ \_data\ +\ \_readPos,\ \textcolor{keyword}{sizeof}(uint16\_t));}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \_readPos\ +=\ \textcolor{keyword}{sizeof}(uint16\_t);}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ value;}
+\DoxyCodeLine{00105\ \ \ \ \ \}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ uint32\_t\ ReadUInt32()\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_readPos\ +\ \textcolor{keyword}{sizeof}(uint32\_t)\ >\ \_size)}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ uint32\_t\ value;}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ memcpy(\&value,\ \_data\ +\ \_readPos,\ \textcolor{keyword}{sizeof}(uint32\_t));}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \_readPos\ +=\ \textcolor{keyword}{sizeof}(uint32\_t);}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ value;}
+\DoxyCodeLine{00114\ \ \ \ \ \}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ int32\_t\ ReadInt32()\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_readPos\ +\ \textcolor{keyword}{sizeof}(int32\_t)\ >\ \_size)}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ int32\_t\ value;}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ memcpy(\&value,\ \_data\ +\ \_readPos,\ \textcolor{keyword}{sizeof}(int32\_t));}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \_readPos\ +=\ \textcolor{keyword}{sizeof}(int32\_t);}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ value;}
+\DoxyCodeLine{00123\ \ \ \ \ \}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{float}\ ReadFloat()\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_readPos\ +\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{float})\ >\ \_size)}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0.0f;}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ value;}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ memcpy(\&value,\ \_data\ +\ \_readPos,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{float}));}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \_readPos\ +=\ \textcolor{keyword}{sizeof}(float);}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ value;}
+\DoxyCodeLine{00132\ \ \ \ \ \}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{void}\ ReadBytes(\textcolor{keywordtype}{void}\ *dest,\ \textcolor{keywordtype}{size\_t}\ length)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_readPos\ +\ length\ >\ \_size)}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ memcpy(dest,\ \_data\ +\ \_readPos,\ length);}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \_readPos\ +=\ length;}
+\DoxyCodeLine{00139\ \ \ \ \ \}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{comment}{//\ Utility}}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordtype}{void}\ Clear()\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \_size\ =\ 0;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \_readPos\ =\ 0;}
+\DoxyCodeLine{00145\ \ \ \ \ \}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{void}\ ResetRead()\textcolor{keyword}{\ override\ }\{\ \_readPos\ =\ 0;\ \}}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ uint8\_t\ *GetData()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \_data;\ \}}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *GetData()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \_data;\ \}}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ GetSize()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \_size;\ \}}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ GetReadPos()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \_readPos;\ \}}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordtype}{bool}\ CanRead(\textcolor{keywordtype}{size\_t}\ bytes)\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \_readPos\ +\ bytes\ <=\ \_size;\ \}}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{comment}{//\ Load\ data\ from\ external\ buffer}}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keywordtype}{void}\ LoadData(\textcolor{keyword}{const}\ uint8\_t\ *data,\ \textcolor{keywordtype}{size\_t}\ size)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (size\ >\ \_capacity)}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ memcpy(\_data,\ data,\ size);}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \_size\ =\ size;}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \_readPos\ =\ 0;}
+\DoxyCodeLine{00162\ \ \ \ \ \}}
+\DoxyCodeLine{00163\ \};}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \textcolor{keyword}{class\ }NetSocket\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classRoar_1_1INetSocket}{INetSocket}}\ \{}
+\DoxyCodeLine{00166\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00167\ \ \ \ \ SOCKET\_TYPE\ \_sockfd;}
+\DoxyCodeLine{00168\ \ \ \ \ sockaddr\_in\ \_addr;}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordtype}{bool}\ \_bound;}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00172\ \ \ \ \ NetSocket()\ :\ \_sockfd(INVALID\_SOCK),\ \_bound(\textcolor{keyword}{false})\ \{}
+\DoxyCodeLine{00173\ \textcolor{preprocessor}{\#if\ defined(\_WIN32)\ ||\ defined(\_WIN64)}}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Initialize\ Winsock}}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ WSADATA\ wsaData;}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (WSAStartup(MAKEWORD(2,\ 2),\ \&wsaData)\ !=\ 0)\ \{}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ perror(\textcolor{stringliteral}{"{}WSAStartup\ failed"{}});}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00180\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \_sockfd\ =\ socket(AF\_INET,\ SOCK\_DGRAM,\ 0);}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_sockfd\ ==\ INVALID\_SOCK)\ \{}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ perror(\textcolor{stringliteral}{"{}Socket\ creation\ failed"{}});}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00185\ \ \ \ \ \}}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \string~NetSocket()\ \{}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_sockfd\ !=\ INVALID\_SOCK)\ \{}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ CLOSE\_SOCKET(\_sockfd);}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00191\ \textcolor{preprocessor}{\#if\ defined(\_WIN32)\ ||\ defined(\_WIN64)}}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ WSACleanup();}
+\DoxyCodeLine{00193\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00194\ \ \ \ \ \}}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keywordtype}{bool}\ Bind(uint16\_t\ port)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ memset(\&\_addr,\ 0,\ \textcolor{keyword}{sizeof}(\_addr));}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \_addr.sin\_family\ =\ AF\_INET;}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \_addr.sin\_addr.s\_addr\ =\ INADDR\_ANY;}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \_addr.sin\_port\ =\ htons(port);}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Set\ socket\ to\ non-\/blocking}}
+\DoxyCodeLine{00203\ \textcolor{preprocessor}{\#if\ defined(\_WIN32)\ ||\ defined(\_WIN64)}}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ u\_long\ mode\ =\ 1;}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ ioctlsocket(\_sockfd,\ FIONBIO,\ \&mode);}
+\DoxyCodeLine{00206\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ flags\ =\ fcntl(\_sockfd,\ F\_GETFL,\ 0);}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ fcntl(\_sockfd,\ F\_SETFL,\ flags\ |\ O\_NONBLOCK);}
+\DoxyCodeLine{00209\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bind(\_sockfd,\ (\textcolor{keyword}{struct}\ sockaddr\ *)\&\_addr,\ \textcolor{keyword}{sizeof}(\_addr))\ <\ 0)\ \{}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ perror(\textcolor{stringliteral}{"{}Bind\ failed"{}});}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \_bound\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00218\ \ \ \ \ \}}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keywordtype}{bool}\ SendTo(\textcolor{keyword}{const}\ \mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ \&buffer,\ \textcolor{keyword}{const}\ sockaddr\_in\ \&dest)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sent\ =}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ sendto(\_sockfd,\ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *)buffer.GetData(),\ (\textcolor{keywordtype}{int})buffer.GetSize(),\ 0,\ (\textcolor{keyword}{struct}\ sockaddr\ *)\&dest,\ \textcolor{keyword}{sizeof}(dest));}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ sent\ >\ 0;}
+\DoxyCodeLine{00224\ \ \ \ \ \}}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{keywordtype}{bool}\ SendTo(\textcolor{keyword}{const}\ \mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ \&buffer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ip,\ uint16\_t\ port)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ sockaddr\_in\ dest;}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ memset(\&dest,\ 0,\ \textcolor{keyword}{sizeof}(dest));}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ dest.sin\_family\ =\ AF\_INET;}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ dest.sin\_port\ =\ htons(port);}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ inet\_pton(AF\_INET,\ ip,\ \&dest.sin\_addr);}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ SendTo(buffer,\ dest);}
+\DoxyCodeLine{00234\ \ \ \ \ \}}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{keywordtype}{int}\ ReceiveFrom(\mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ \&buffer,\ sockaddr\_in\ \&from)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ temp[4096];}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ socklen\_t\ fromLen\ =\ \textcolor{keyword}{sizeof}(from);}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ received\ =\ recvfrom(\_sockfd,\ temp,\ \textcolor{keyword}{sizeof}(temp),\ 0,\ (\textcolor{keyword}{struct}\ sockaddr\ *)\&from,\ \&fromLen);}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (received\ >\ 0)\ \{}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ buffer.LoadData((\textcolor{keyword}{const}\ uint8\_t\ *)temp,\ received);}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ received;}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ received;\ \textcolor{comment}{//\ 0\ or\ -\/1}}
+\DoxyCodeLine{00248\ \ \ \ \ \}}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \ \ \ \ SOCKET\_TYPE\ GetFd()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \_sockfd;\ \}}
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keywordtype}{bool}\ IsBound()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \_bound;\ \}}
+\DoxyCodeLine{00252\ \};}
+\DoxyCodeLine{00253\ }
+\DoxyCodeLine{00254\ \textcolor{keyword}{class\ }NetServer\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classRoar_1_1INetServer}{INetServer}}\ \{}
+\DoxyCodeLine{00255\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00256\ \ \ \ \ \mbox{\hyperlink{classRoar_1_1NetSocket}{NetSocket}}\ \_socket;}
+\DoxyCodeLine{00257\ \ \ \ \ uint16\_t\ \_port;}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00260\ \ \ \ \ NetServer(uint16\_t\ port)\ :\ \_port(port)\ \{\}}
+\DoxyCodeLine{00261\ \ \ \ \ \textcolor{keywordtype}{bool}\ Start()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \_socket.Bind(\_port);\ \}}
+\DoxyCodeLine{00262\ \ \ \ \ \textcolor{keywordtype}{int}\ Receive(\mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ \&buffer,\ sockaddr\_in\ \&from)\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \_socket.ReceiveFrom(buffer,\ from);\ \}}
+\DoxyCodeLine{00263\ \ \ \ \ \textcolor{keywordtype}{bool}\ SendTo(\textcolor{keyword}{const}\ \mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ \&buffer,\ \textcolor{keyword}{const}\ sockaddr\_in\ \&dest)\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \_socket.SendTo(buffer,\ dest);\ \}}
+\DoxyCodeLine{00264\ \ \ \ \ SOCKET\_TYPE\ GetFd()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \_socket.GetFd();\ \}}
+\DoxyCodeLine{00265\ \};}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \textcolor{keyword}{class\ }NetClient\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classRoar_1_1INetClient}{INetClient}}\ \{}
+\DoxyCodeLine{00268\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00269\ \ \ \ \ \mbox{\hyperlink{classRoar_1_1NetSocket}{NetSocket}}\ \_socket;}
+\DoxyCodeLine{00270\ \ \ \ \ sockaddr\_in\ \_serverAddr;}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{keywordtype}{bool}\ \_connected;}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00274\ \ \ \ \ NetClient()\ :\ \_connected(\textcolor{keyword}{false})\ \{\}}
+\DoxyCodeLine{00275\ }
+\DoxyCodeLine{00276\ \ \ \ \ \textcolor{keywordtype}{bool}\ Connect(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ip,\ uint16\_t\ port)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Bind\ to\ any\ port}}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\_socket.Bind(0))\ \{}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00281\ }
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ memset(\&\_serverAddr,\ 0,\ \textcolor{keyword}{sizeof}(\_serverAddr));}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \_serverAddr.sin\_family\ =\ AF\_INET;}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \_serverAddr.sin\_port\ =\ htons(port);}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ inet\_pton(AF\_INET,\ ip,\ \&\_serverAddr.sin\_addr);}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \_connected\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00289\ \ \ \ \ \}}
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00291\ \ \ \ \ \textcolor{keywordtype}{bool}\ Send(\textcolor{keyword}{const}\ \mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ \&buffer)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\_connected)}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_socket.SendTo(buffer,\ \_serverAddr);}
+\DoxyCodeLine{00295\ \ \ \ \ \}}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \ \ \ \ \textcolor{keywordtype}{int}\ Receive(\mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ \&buffer)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ sockaddr\_in\ from;}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_socket.ReceiveFrom(buffer,\ from);}
+\DoxyCodeLine{00300\ \ \ \ \ \}}
+\DoxyCodeLine{00301\ }
+\DoxyCodeLine{00302\ \ \ \ \ SOCKET\_TYPE\ GetFd()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \_socket.GetFd();\ \}}
+\DoxyCodeLine{00303\ \ \ \ \ \textcolor{keywordtype}{bool}\ IsConnected()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \_connected;\ \}}
+\DoxyCodeLine{00304\ \};}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00306\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classRoar_1_1NetlibNetwork}{NetlibNetwork}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{classRoar_1_1INetwork}{INetwork}}\ \{}
+\DoxyCodeLine{00307\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00308\ \ \ \ \ \mbox{\hyperlink{classRoar_1_1INetClient}{INetClient}}\ *NewClient()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ \mbox{\hyperlink{classRoar_1_1NetClient}{NetClient}}();\ \}}
+\DoxyCodeLine{00309\ \ \ \ \ \mbox{\hyperlink{classRoar_1_1INetServer}{INetServer}}\ *NewServer(uint16\_t\ port)\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ \mbox{\hyperlink{classRoar_1_1NetServer}{NetServer}}(port);\ \}}
+\DoxyCodeLine{00310\ \ \ \ \ \mbox{\hyperlink{classRoar_1_1INetBuffer}{INetBuffer}}\ *NewBuffer()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ \mbox{\hyperlink{classRoar_1_1NetBuffer}{NetBuffer}}();\ \}}
+\DoxyCodeLine{00311\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *GetID()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}NetlibNetwork"{}};\ \}}
+\DoxyCodeLine{00312\ \};}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \}\ \textcolor{comment}{//\ namespace\ Roar}}
+
+\end{DoxyCode}
