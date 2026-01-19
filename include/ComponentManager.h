@@ -1,12 +1,13 @@
 #pragma once
 #include "Component.h"
 #include "ComponentArray.h"
+#include <string>
 #include <memory>
 
 class ComponentManager {
   private:
-    std::unordered_map<const char *, ComponentType> _componentType{};
-    std::unordered_map<const char *, std::shared_ptr<IComponentArray>> _componentArrays{};
+    std::unordered_map<std::string, ComponentType> _componentType{};
+    std::unordered_map<std::string, std::shared_ptr<IComponentArray>> _componentArrays{};
     ComponentType _nextComponentType{};
 
     template <typename T> std::shared_ptr<ComponentArray<T>> GetComponentArray() {
